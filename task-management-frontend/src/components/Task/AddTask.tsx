@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import taskSchema from '@/validations/taskValidation';
+import taskSchema from '@/validations/task/taskValidation';
 import { Task } from '@/types';
 import { useAppDispatch } from '@/hooks/hooks';
 import { create } from '@/redux/actions/taskAction';

@@ -1,3 +1,3 @@
 const taskSchema = require('./taskValidation')
-
-module.exports = {taskSchema}
+const userSchema = require('./userValidation')
+module.exports = {taskSchema,userSchema}

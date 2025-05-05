@@ -1,6 +1,11 @@
 const express = require('express');
 const taskRoutes = require('./taskRoutes');
-const router = express.Router();
+const userRoutes = require('./userRoutes');
 
-router.use('/task',taskRoutes)
+const router = express.Router();
+console.log("Task and User routes mounted");
+
+router.use('/tasks',taskRoutes)
+router.use('/user',userRoutes)
+
 module.exports = router;

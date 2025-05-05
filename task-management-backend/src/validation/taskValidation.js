@@ -18,6 +18,4 @@ const taskSchema = z.object({
 })
 
 
-module.exports = {
-  taskSchema,    
-};
+module.exports = taskSchema    
