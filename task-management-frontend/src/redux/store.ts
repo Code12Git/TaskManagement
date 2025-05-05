@@ -1,9 +1,10 @@
 import { legacy_createStore as createStore, applyMiddleware, combineReducers, compose ,Reducer} from 'redux';
-import {thunk }from 'redux-thunk';
+import {thunk } from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; 
 import taskReducer from './reducers/taskreducer';
-import { taskState } from '@/types';
+import authReducer from './reducers/authreducer';
+import { taskState, userState } from '@/types';
 
  const persistConfig = {
   key: 'root',
@@ -11,7 +12,8 @@ import { taskState } from '@/types';
 };
 
  const rootReducer = combineReducers({
-    tasks:taskReducer as unknown as Reducer<taskState>
+    tasks:taskReducer as unknown as Reducer<taskState>,
+    auth:authReducer as unknown as Reducer<userState>
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
