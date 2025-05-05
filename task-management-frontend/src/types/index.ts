@@ -5,12 +5,17 @@ export interface User {
   name: string;
   username: string;
   email: string;
-  password?: string; 
+  password: string; 
   role?: string; 
   createdAt?: string;
   updatedAt?: string;
 }
-
+export interface registerFormData {
+  name:string;
+  email:string;
+  username:string;
+  password:string;
+}
 export interface AuthResponse {
   user: User;
   token: string;

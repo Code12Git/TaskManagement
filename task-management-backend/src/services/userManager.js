@@ -12,8 +12,7 @@ const { v4: uuidv4 } = require("uuid");
 const register = async (body) => {
   const { name, email, username, password } = body;
   try {
-    console.log(body)
-    const user = userModel.findOne({ email });
+    const user = await userModel.findOne({ email });
     if (user) throw new AppError({ ...CONFLICT, message: "User Already Exists" });
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -32,6 +31,7 @@ const register = async (body) => {
 const login = async (body,redisClient) => {
   const { email, password } = body;
   try {
+    console.log("RedisClient:",redisClient)
     const user = await userModel.findOne({ email });
     console.log('Triggered')
     if (!user)
@@ -63,7 +63,7 @@ const login = async (body,redisClient) => {
         `session:${sessionId}`,
         JSON.stringify(sessionData),
         {
-            EX: 60 * 60 * 24 * 7 // This is equal to 7 days
+            EX: 60 * 60 * 24 * 7  
         }
     );
     return {

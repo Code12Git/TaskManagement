@@ -40,7 +40,7 @@ export const loginUser = (credentials: { email: string; password: string }) => a
   dispatch({ type: LOGIN_REQUEST });
   
   try {
-    const response = await publicRequest.post<AuthResponse>('/api/user/login', credentials);
+    const response = await publicRequest.post<AuthResponse>('/user/login', credentials);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: {

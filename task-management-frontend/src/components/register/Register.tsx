@@ -4,21 +4,27 @@ import React from 'react';
 
 import { motion } from 'framer-motion';
 import { FiUser, FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
-import userSchema from '@/validations/userValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
 import { registerUser } from '@/redux/actions/authAction';
+import z from 'zod'
+import { useRouter } from 'next/navigation';
+import registerValidation from '@/validations/auth/registerValidation';
+type registerForm = z.infer<typeof registerValidation>;
+
 const Register = () => {
     const {isLoading,error} = useAppSelector(state=>state.auth)
-    console.log(isLoading,error)
+    const router = useRouter()
     const dispatch = useAppDispatch()
     const {
         register,
         handleSubmit,
+        clearErrors,
+        reset,
         formState: { errors, isSubmitting },
-      } = useForm({
-        resolver: zodResolver(userSchema),
+      } = useForm<registerForm>({
+        resolver: zodResolver(registerValidation),
         defaultValues: {
           name: '',
           username: '',
@@ -27,11 +33,14 @@ const Register = () => {
         },
       });
 
-  const onSubmit = async (data) => {
+  const submitHandler = async (data:registerForm) => {
     console.log(errors,isSubmitting)
     try{
         console.log(data)
         dispatch(registerUser(data))
+        clearErrors()
+        reset()
+        router.push('/login')
     }catch(err){
         throw err;
     }
@@ -93,7 +102,7 @@ const Register = () => {
             </motion.div>
           )}
 
-          <motion.form variants={containerVariants} onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <motion.form variants={containerVariants} onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <motion.div variants={itemVariants}>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name

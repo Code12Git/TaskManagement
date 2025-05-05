@@ -7,8 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
 import { loginUser } from '@/redux/actions/authAction';
-// import { LoginFormData } from '@/validations/userValidation';
-import userSchema from '@/validations/userValidation';
+import loginValidation from '@/validations/auth/loginValidation';
+import z from 'zod'
+
+type loginForm = z.infer<typeof loginValidation>;
+
 const Login = () => {
     const { isLoading, error } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
@@ -17,15 +20,15 @@ const Login = () => {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<LoginFormData>({
-        resolver: zodResolver(userSchema),
+    } = useForm<loginForm>({
+        resolver: zodResolver(loginValidation),
         defaultValues: {
             email: '',
             password: '',
         },
     });
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data:loginForm) => {
         try {
             dispatch(loginUser(data));
         } catch (err) {
@@ -190,7 +193,7 @@ const Login = () => {
 
                     <motion.div variants={itemVariants} className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            Don't have an account?{' '}
+                            Don{' ' }t have an account?{' '}
                             <motion.a
                                 href="/register"
                                 className="font-medium text-indigo-600 hover:text-indigo-500 inline-flex items-center"

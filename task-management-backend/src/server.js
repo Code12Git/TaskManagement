@@ -5,7 +5,7 @@ const { logger } = require('./utils');
 const connectDB = require('./config');  
 const routes = require('./routes');
 const cors = require('cors');
-const helmet = require('helmet');
+// const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const app = express();
 
@@ -21,6 +21,7 @@ const REDIS_CONFIG = {
   }
 };
 
+
 // Enhanced CORS configuration
 const corsOptions = {
   origin: ['http://localhost:3000'], // Array of allowed origins
@@ -31,8 +32,9 @@ const corsOptions = {
 };
 
 // Critical middleware - ordered correctly
-app.use(helmet()); // Security headers first
+// app.use(helmet()); // Security headers first
 app.use(cors(corsOptions)); // CORS before other middleware
+
 app.use(express.json({ limit: '10kb' })); // Body parsing
 app.use(express.urlencoded({ extended: true })); // URL-encoded data
 
