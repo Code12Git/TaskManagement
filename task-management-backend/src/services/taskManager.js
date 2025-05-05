@@ -1,20 +1,71 @@
 const {taskModel} = require('../models')
+const _ = require('lodash');
+const { AppError } = require('../utils');
+const { NOT_FOUND } = require('../utils/errors');
 
-const create = () => {
-
+const create = async(body) => {
+    const {title,description,dueDate,priority,status} = body;
+    try{
+        const task = await taskModel.create({
+            title,
+            description,
+            dueDate,
+            priority,
+            status
+        })
+        return task;
+    }catch(err){
+        throw err;
+    }
 }
 
 
-const update = () => {
-
+const update = async(body,params) => {
+    const {title,description,dueDate,priority,status} = body;
+    const {id} = params
+    try{
+        const updatedTask = await taskModel.findByIdAndUpdate(id,{
+            title,
+            description,
+            dueDate,
+            priority,
+            status
+        })
+        if(!updatedTask) throw new AppError({...NOT_FOUND,message:'Task not found'})
+         return updatedTask   
+    }catch(err){
+        throw err;
+    }
 }
 
-const get = () => {
+const deleteOne = async(params) => {
+    const {id} = params;
+    try{
+        const deletedTask = await taskModel.findByIdAndDelete(id)
+        if(!deletedTask) throw new AppError({...NOT_FOUND,message:'Task not found'})
+    }catch(err){
+        throw err;
+    }
+}
 
+const get = async(params) => {
+    const {id} = params;
+    try{
+        const getTask = await taskModel.findById(id)
+        if(!getTask) throw new AppError({...NOT_FOUND,message:"Task not present"})
+    }catch(err){
+        throw err;
+    }
 }
 
 
-const getAll = () => {
-
+const getAll = async() => {
+    try{
+        const getAllTask = await taskModel.find();
+        if(!getAllTask) throw new AppError({...NOT_FOUND,message:"No task is present"});
+    }catch(err){
+        throw err;
+    }
 }
 
+module.exports = {create,update,get,getAll,deleteOne}

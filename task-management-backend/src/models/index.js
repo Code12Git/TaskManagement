@@ -1,3 +1,3 @@
 const task= require('./task')
-
-module.exports = {taskModel:task}
+const user = require('./user')
+module.exports = {taskModel:task,userModel:user}
