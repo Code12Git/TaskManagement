@@ -4,17 +4,19 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { storage } from '@/lib/storage';
 import taskReducer from './reducers/taskreducer';
 import authReducer from './reducers/authreducer';
-import { taskState, userState } from '@/types';
+import { authState, taskState, userState } from '@/types';
+import userReducer from './reducers/userreducer';
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth','tasks'],
+  whitelist: ['auth','tasks','user'],
 };
 
 const rootReducer = combineReducers({
   tasks: taskReducer as unknown as Reducer<taskState>,
-  auth: authReducer as unknown as Reducer<userState>
+  auth: authReducer as unknown as Reducer<authState>,
+  user:userReducer as unknown as Reducer<userState>
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

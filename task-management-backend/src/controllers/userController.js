@@ -1,27 +1,21 @@
 const {responseManager, userManager} = require('../services')
-const {redisClient} = require('../server')
-
-const register = async(request,response) => {
+const getUser = async(request,response) => {
     try{
-        const result = await userManager.register(request.body)
-        return responseManager.sendSuccessResponse(response,result,'User Created Successfully!')
+        const result = await userManager.getUser()
+        return responseManager.sendSuccessResponse(response,result,'User details fetched successfully!')
     }catch(err){
-        return responseManager.sendErrorResponse(response,err,'Cannot Create User')
+        return responseManager.sendErrorResponse(response,err,'Cannot get all user')
     }
 }
 
-const login = async(request,response) => {
+const assignUser = async(request,response) => {
+    
     try{
-        const result = await login({
-            ...request.body,
-            ip: request.ip,
-            userAgent: request.headers['user-agent']
-          }, redisClient);  // Pass redisClient here        
-          return responseManager.sendSuccessResponse(response,result,'User Logged In Successfully!')
+        const result = await userManager.assignUser(request.body)
+        return responseManager.sendSuccessResponse(response,result,'User Assigned Successfully')
     }catch(err){
-        return responseManager.sendErrorResponse(response,err,'Cannot login User')
+        return responseManager.sendErrorResponse(response,err,'Cannot assign user')
     }
 }
 
-
-module.exports = {register,login}
+module.exports = {getUser,assignUser}

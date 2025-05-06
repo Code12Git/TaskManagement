@@ -6,17 +6,17 @@ import {
   REGISTER_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
-  LOGIN_FAILURE
+  LOGIN_FAILURE,
 } from '../actionTypes/actionTypes'
 import { AuthResponse, UserCredentials } from '@/types';
 import { ApiError } from '@/types';
-
+import toast from 'react-hot-toast'
 
 export const registerUser = (data: UserCredentials) => async (dispatch: Dispatch) => {
   dispatch({ type: REGISTER_REQUEST });
   
   try {
-    const response = await publicRequest.post<AuthResponse>('/user/register', data);
+    const response = await publicRequest.post<AuthResponse>('/auth/register', data);
     dispatch({ 
       type: REGISTER_SUCCESS, 
       payload: {
@@ -24,6 +24,8 @@ export const registerUser = (data: UserCredentials) => async (dispatch: Dispatch
         token: response.data.token
       }
     });
+    toast.success("User Registered Successfully")
+    return response.data;
   } catch (err) {
     const error = err as ApiError;
     dispatch({
@@ -33,21 +35,26 @@ export const registerUser = (data: UserCredentials) => async (dispatch: Dispatch
               error.message || 
               'Registration failed'
     });
+    toast.error("Error Register User Successfully")
+
   }
 };
 
 export const loginUser = (credentials: { email: string; password: string }) => async (dispatch: Dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
-  
   try {
-    const response = await publicRequest.post<AuthResponse>('/user/login', credentials);
+    const response = await publicRequest.post<AuthResponse>('/auth/login', credentials);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: {
-        user: response.data.user,
-        token: response.data.token
+        user: response.data.data.user,
+        token: response.data.data.token
       }
     });
+    localStorage.setItem('token', response.data.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    toast.success("User Logged In Successfully")
+    return response.data
   } catch (err) {
     const error = err as ApiError;
     dispatch({
@@ -57,5 +64,8 @@ export const loginUser = (credentials: { email: string; password: string }) => a
               error.message || 
               'Login failed'
     });
+    toast.error("Error Logged In User Successfully")
+
   }
+
 };

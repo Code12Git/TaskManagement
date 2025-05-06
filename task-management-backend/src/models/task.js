@@ -25,6 +25,10 @@ const taskSchema = new Schema({
     enum: ['completed', 'in-progress', 'not-started'],
     default: 'not-started'
   },
+  assignTo:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'User'
+  }
 }, { 
   timestamps: true 
 });

@@ -9,16 +9,18 @@ import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
 import { loginUser } from '@/redux/actions/authAction';
 import loginValidation from '@/validations/auth/loginValidation';
 import z from 'zod'
-
+import { useRouter } from 'next/navigation';
 type loginForm = z.infer<typeof loginValidation>;
 
 const Login = () => {
     const { isLoading, error } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
-    
+    const router = useRouter()
     const {
         register,
         handleSubmit,
+        clearErrors,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<loginForm>({
         resolver: zodResolver(loginValidation),
@@ -30,7 +32,12 @@ const Login = () => {
 
     const onSubmit = async (data:loginForm) => {
         try {
-            dispatch(loginUser(data));
+            const res = await dispatch(loginUser(data));
+            clearErrors()
+            reset()
+            if (res && res.statusCode === 200) {
+                router.push('/');
+            }
         } catch (err) {
             console.error('Login error:', err);
         }

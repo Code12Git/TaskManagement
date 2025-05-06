@@ -17,8 +17,11 @@ export interface registerFormData {
   password:string;
 }
 export interface AuthResponse {
-  user: User;
-  token: string;
+  data:{
+    user: User;
+    token: string
+  }
+  statusCode:number;
 }
 
 export interface AuthError {
@@ -26,12 +29,18 @@ export interface AuthError {
   statusCode?: number;
 }
 
-export interface userState {
+export interface authState {
   userData: User | null;  // Changed from User[] to User since auth deals with single user
   isLoading: boolean;
   error: string | null;   // Changed from boolean to string for error messages
   isAuthenticated: boolean;
   token: string | null;
+}
+
+export interface userState {
+  users: User[];
+  loading:boolean;
+  error:null
 }
 
 export interface UserCredentials {
@@ -63,6 +72,10 @@ export interface userPayload {
   token?: string;
   error?: string;
   id?: string;
+}
+
+export interface userDataPayload{
+  user?:User
 }
 
 // Your existing task interfaces

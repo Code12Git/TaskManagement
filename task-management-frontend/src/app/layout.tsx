@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/hooks/provider";
+import { Toaster } from "react-hot-toast";
+import PrivateRoute from "@/hooks/privateRouter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Toaster />
+        <Providers><PrivateRoute>{children}</PrivateRoute></Providers>
       </body>
     </html>
   );

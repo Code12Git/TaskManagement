@@ -1,4 +1,4 @@
-import { userPayload, userState } from "@/types/index";
+import { authState, userPayload } from "@/types/index";
 import {
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
@@ -6,12 +6,10 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  LOGOUT_REQUEST,
-  LOGOUT_SUCCESS,
-  LOGOUT_FAILURE
+
 } from "../actionTypes/actionTypes";
 
-const initialState: userState = {
+const initialState: authState = {
   userData: null,
   isLoading: false,
   error: null,
@@ -52,6 +50,7 @@ const authReducer = (state = initialState, { type, payload }: { type: string; pa
         error: null
       };
     case LOGIN_SUCCESS:
+      console.log(payload)
       return {
         ...state,
         isLoading: false,
@@ -67,23 +66,6 @@ const authReducer = (state = initialState, { type, payload }: { type: string; pa
         error: payload
       };
 
-    // LOGOUT
-    case LOGOUT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        error: null
-      };
-    case LOGOUT_SUCCESS:
-      return {
-        ...initialState 
-      };
-    case LOGOUT_FAILURE:
-      return {
-        ...state,
-        isLoading: false,
-        error: payload
-      };
 
     default:
       return state;

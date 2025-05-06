@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/hooks'
 import { deleteOne, getAll } from '@/redux/actions/taskAction'
 import LoadingSpinner from '@/app/LoadingSpinner'
 import ErrorDisplay from '@/app/ErrorDisplay'
-import UpdateTaskModal from '@/ui/modal/task/UpdateTaskModal'
+import { assignUser, fetchUser } from '@/redux/actions/userAction'
 
 type Task = {
   _id: string
@@ -61,13 +61,7 @@ const Tasks = () => {
         </div>
         
         <TaskList tasks={taskData} />
-        {editingTask && (
-        <UpdateTaskModal
-          task={editingTask}
-          onClose={() => setEditingTask(null)}
-          onSave={handleSaveTask}
-        />
-      )}
+      
         {taskData.length > 0 && (
           <TaskSummary tasks={taskData} />
         )}
@@ -101,8 +95,12 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => (
 
 const TaskItem = ({ task }: { task: Task }) => {
   const dispatch = useAppDispatch()
-
-
+ const {users} =  useAppSelector(state=>state.user)
+ console.log(users)
+ const [assign,setAssign] = useState('')
+  useEffect(()=>{
+    dispatch(fetchUser())
+  },[dispatch])
 
   const handleDelete = async(id:string) => {
     await dispatch(deleteOne(id))
@@ -118,6 +116,12 @@ const TaskItem = ({ task }: { task: Task }) => {
     'high': <FiAlertCircle className="text-red-400" />,
     'medium': <FiFlag className="text-amber-400" />,
     'low': <FiClock className="text-blue-400" />
+  }
+  const handleAssignies = (e:React.ChangeEvent<HTMLSelectElement>) => {
+    setAssign(e.target.value)
+    const userId = assign
+    const taskId = task._id
+    dispatch(assignUser(userId,taskId))
   }
 
   return (
@@ -157,6 +161,13 @@ const TaskItem = ({ task }: { task: Task }) => {
       </div>
       
       <div className="flex gap-2 ml-4">
+        <p className='text-lg font-bold'>Assigned to</p>
+      <select onChange={handleAssignies}>
+  {users?.map((user, index) => (
+    <option value={user._id} key={index}>{user.email}</option>
+  ))}
+</select>
+
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
