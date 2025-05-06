@@ -1,27 +1,59 @@
 const express = require('express');
 const { fromEnv } = require('./utils');
+const { createServer } = require('node:http');
+const socketIo = require('socket.io');
 const { logger } = require('./utils');
 const connectDB = require('./config/connection');  
 const routes = require('./routes');
 const cors = require('cors');
+const SocketService = require('./services/socketService');
+
 const app = express();
+const server = createServer(app);
+
+const io = new socketIo.Server(server, {
+  cors: {
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
+new SocketService(io); 
+
 const PORT = fromEnv('PORT') || 3002;
-connectDB();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
- 
-app.use('/api', routes); 
+connectDB().catch(err => {
+  logger.error('Database connection failed', err);
+  process.exit(1);
+});
 
-app.get('/', (req, res) => {
+ app.use(express.json());
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*', 
+  optionsSuccessStatus: 200
+}));
+
+ app.use('/api', routes); 
+
+ app.get('/', (req, res) => {
   res.status(200).json({
     status: 'UP',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    service: 'Your Service Name'
   });
 });
 
+ app.use((err, req, res, next) => {
+  logger.error('Unhandled error', { error: err });
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
-app.listen(PORT, () => {
+app.set('io', io);
+// Start server
+server.listen(PORT, () => {
   logger.info(`🚀 Server running at PORT: ${PORT}`);
 });
+
+
+
+module.exports = { server, io };
