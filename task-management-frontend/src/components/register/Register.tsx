@@ -36,12 +36,12 @@ const Register = () => {
   const submitHandler = async (data:registerForm) => {
     console.log(errors,isSubmitting)
     try{
-        console.log(data)
-        dispatch(registerUser(data))
+  const res = await        dispatch(registerUser(data))
         clearErrors()
         reset()
-        router.push('/login')
-    }catch(err){
+        if (res && res.statusCode === 200) {
+          router.push('/login');
+      }    }catch(err){
         throw err;
     }
   };

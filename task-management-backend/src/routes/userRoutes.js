@@ -1,10 +1,10 @@
 const express = require('express');
-const { userSchema } = require('../validation');
+const verifyToken = require('../middleware/verifyToken');
 const { userController } = require('../controllers');
-const {verifyData} = require('../middleware');
 const router = express.Router();
 
-router.post('/register',verifyData(userSchema),userController.register)
-router.post('/login',verifyData(userSchema),userController.login)
+
+router.get('/',verifyToken,userController.getUser)
+router.post('/assign',verifyToken,userController.assignUser)
 
 module.exports = router

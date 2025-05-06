@@ -30,7 +30,7 @@ const AddTask = () => {
   const onSubmit: SubmitHandler<Task> = async (formData) => {
     try {
       await dispatch(create(formData));
-      router.push('/tasks');
+      router.push('/task');
     } catch (error) {
       console.error('Error creating task:', error);
     }
