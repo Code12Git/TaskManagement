@@ -1,9 +1,9 @@
 const { userModel, taskModel } = require("../models");
+const { io } = require("../server");
 const { AppError} = require("../utils");
 const {
   NOT_FOUND,
 } = require("../utils/errors");
-
 
 const getUser = async() => {
     try{
@@ -15,7 +15,7 @@ const getUser = async() => {
     }
 }
 
-const assignUser = async(body) => {
+const assignUser = async(body,io) => {
     console.log(body)
     const {taskId,userId} = body;
     try{
