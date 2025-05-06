@@ -6,6 +6,8 @@ const taskState:taskState = {
     error: null,
 };
 
+
+console.log(taskState.taskData)
 const taskReducer = (state = taskState, { type, payload }: { type: string; payload: taskPayload }) => {
     switch (type) {
         // CREATE
@@ -37,10 +39,11 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
                 error: null
             };
         case GET_TASKS_SUCCESS:
+            console.log(payload)
             return {
                 ...state,
                 isLoading: false,
-                taskData: payload,
+                taskData: Array.isArray(payload) ? payload : [],
                 error: null
             };
         case GET_TASKS_FAILURE:
@@ -82,7 +85,7 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
                 ...state,
                 isLoading: false,
                 taskData: state.taskData.map(task => 
-                    task.id === payload.id ? payload : task
+                    task._id === payload.id ? payload : task
                 ),
                 error: null
             };
@@ -104,7 +107,7 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
             return {
                 ...state,
                 isLoading: false,
-                taskData: state.taskData.filter(task => task.id !== payload),
+                taskData: state.taskData.filter(task => task._id !== payload),
                 error: null
             };
         case DELETE_TASK_FAILURE:

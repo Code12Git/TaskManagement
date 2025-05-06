@@ -63,6 +63,7 @@ const getAll = async() => {
     try{
         const getAllTask = await taskModel.find();
         if(!getAllTask) throw new AppError({...NOT_FOUND,message:"No task is present"});
+        return getAllTask;
     }catch(err){
         throw err;
     }

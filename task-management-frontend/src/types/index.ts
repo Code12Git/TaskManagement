@@ -67,6 +67,7 @@ export interface userPayload {
 
 // Your existing task interfaces
 export interface Task {
+  _id?:string
   title?: string;
   description: string;
   dueDate: string;
