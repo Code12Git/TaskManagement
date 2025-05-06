@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true })); // URL-encoded data
 
 // Rate limiting configuration
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 45 * 60 * 1000,
   max: 100,
   handler: (req, res) => {
     logger.warn(`Rate limit exceeded for IP: ${req.ip}`);

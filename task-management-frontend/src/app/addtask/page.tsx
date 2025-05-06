@@ -1,11 +1,11 @@
-import Tasks from '@/components/Task/Tasks'
+import AddTask from '@/components/Task/AddTask'
 import React from 'react'
 
 const Page = () => {
   return (
-   <>
-<Tasks />
-   </>
+    <>
+    <AddTask />
+    </>
   )
 }
 
