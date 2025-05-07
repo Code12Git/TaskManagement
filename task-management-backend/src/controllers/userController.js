@@ -32,7 +32,6 @@ const assignUser = async (request, response) => {
 
         return responseManager.sendSuccessResponse(response, result);
     } catch (error) {
-        logger.error('Assignment error:', error);
         return responseManager.sendErrorResponse(response, error);
     }
 };

@@ -41,10 +41,11 @@ export const assignUser = (userId:string,taskId:string) => async (dispatch: Disp
   dispatch({ type: ASSIGN_USERS_REQUEST });
    console.log("UserId:",userId,"TaskId",taskId) 
   try {
-     await privateRequest.post<AuthResponse>('/user/assign',{userId,taskId});
+     const res = await privateRequest.post<AuthResponse>('/user/assign',{userId,taskId});
     dispatch({ 
       type: ASSIGN_USERS_SUCCESS, 
     });
+    console.log(res)
     toast.success('User Assigned Successfully')
   } catch (err) {
     const error = err as ApiError;

@@ -86,6 +86,9 @@ export interface Task {
   dueDate: string;
   priority?: 'low' | 'medium' | 'high';
   status?: 'not-started' | 'in-progress' | 'completed';
+  assignedTo:string;
+  userId?:string
+  assignTo:string
 }
 
 export interface taskState {

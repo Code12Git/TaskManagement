@@ -70,6 +70,7 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
             return {
                 ...state,
                 isLoading: false,
+                taskData:payload,
                 error: payload
             };
 

@@ -1,5 +1,4 @@
 const { userModel, taskModel } = require("../models");
-const { io } = require("../server");
 const { AppError} = require("../utils");
 const {
   NOT_FOUND,
@@ -16,16 +15,16 @@ const getUser = async() => {
 }
 
 const assignUser = async(body,io) => {
-    console.log(body)
     const {taskId,userId} = body;
     try{
         const task = await taskModel.findById(taskId)
         if(!task) throw new AppError({...NOT_FOUND,message:'Task not found'})
-        const user = await userModel.findById(userId)
+        const user = await userModel.findById(userId);
         if(!user) throw new AppError({...NOT_FOUND,message:'User not found'})
         task.assignTo = userId    
         await task.save()
-        return task;
+        console.log(task)
+        return {...task,name:user.name,email:user.email};
     }catch(err){
         throw err;
     }

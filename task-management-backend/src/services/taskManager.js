@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { AppError } = require('../utils');
 const { NOT_FOUND } = require('../utils/errors');
 
-const create = async(body) => {
+const create = async(body,user) => {
     const {title,description,dueDate,priority,status} = body;
     try{
         const task = await taskModel.create({
@@ -11,7 +11,8 @@ const create = async(body) => {
             description,
             dueDate,
             priority,
-            status
+            status,
+            userId:user._id
         })
         return task;
     }catch(err){
@@ -58,9 +59,20 @@ const get = async(params) => {
     }
 }
 
-
+const getAllTaskByUser = async (user) => {
+    try {
+      const tasks = await taskModel.find({ userId: user._id });  
+      if (!tasks || tasks.length === 0)  throw new AppError({ ...NOT_FOUND, message: 'No tasks found for this user' });
+      
+      return tasks;
+    } catch (err) {
+      throw err;
+    }
+  };
+  
 const getAll = async() => {
     try{
+
         const getAllTask = await taskModel.find();
         if(!getAllTask) throw new AppError({...NOT_FOUND,message:"No task is present"});
         return getAllTask;
@@ -69,4 +81,4 @@ const getAll = async() => {
     }
 }
 
-module.exports = {create,update,get,getAll,deleteOne}
+module.exports = {create,update,get,getAll,deleteOne,getAllTaskByUser}

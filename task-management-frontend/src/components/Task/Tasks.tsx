@@ -15,6 +15,7 @@ import LoadingSpinner from "@/app/LoadingSpinner";
 import ErrorDisplay from "@/app/ErrorDisplay";
 import { assignUser, fetchUser } from "@/redux/actions/userAction";
 import { socket } from "@/helpers/socket";
+import toast from "react-hot-toast";
 type Task = {
   _id: string;
   title: string;
@@ -41,8 +42,8 @@ const Tasks = () => {
       error: tasks.error || null,
     };
   });
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
+  console.log(taskData)
   useEffect(() => {
     dispatch(getAll());
   }, [dispatch]);
@@ -112,7 +113,7 @@ const TaskItem = ({ task }: { task: Task }) => {
   socket.emit('join', userData._id);
 
   const handleTaskAssigned = (data: any) => {
-    alert(`New task assigned to you: ${data.title}`); // Only the assignee sees this
+    toast.success(`New task assigned to you: ${data.title}`); // Only the assignee sees this
   };
 
   socket.on('taskAssigned', handleTaskAssigned);
