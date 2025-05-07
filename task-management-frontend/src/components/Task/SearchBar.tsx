@@ -1,7 +1,7 @@
 'use client'
 import { motion } from "framer-motion";
 import { useAppDispatch } from "@/hooks/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { filteredTask } from "@/redux/actions/taskAction";
 import type { searchTerm } from "@/types";  
 
@@ -14,19 +14,19 @@ const SearchBar = () => {
     });
     const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            dispatch(filteredTask(filters));
+        }, 300);  
+
+        return () => clearTimeout(timer);
+    }, [filters, dispatch]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         
-         setFilters(prev => {
-             const updatedFilters = {
-                ...prev,
-                [name]: value
-            };
-            
-             dispatch(filteredTask(updatedFilters));
-            
-            return updatedFilters;
-        });
+        setFilters(prev => ({ ...prev, [name]: value }));
+
     };
 
     console.log(filters);  

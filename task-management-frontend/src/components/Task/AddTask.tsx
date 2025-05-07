@@ -2,11 +2,14 @@
 import { motion } from 'framer-motion';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod'
 import taskSchema from '@/validations/task/taskValidation';
 import { Task } from '@/types';
 import { useAppDispatch } from '@/hooks/hooks';
 import { create } from '@/redux/actions/taskAction';
 import { useRouter } from 'next/navigation';
+
+type TaskForm = z.infer<typeof taskSchema>;
 
 const AddTask = () => {
   const dispatch = useAppDispatch();
@@ -16,20 +19,20 @@ const AddTask = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<Task>({
+  } = useForm<TaskForm>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
       title: '',
       description: '',
       dueDate: '',
-      priority: 'medium',
-      status: 'not-started',
+      priority: undefined,
+      status: undefined,
     },
   });
 
-  const onSubmit: SubmitHandler<Task> = async (formData) => {
+  const onSubmit: SubmitHandler<TaskForm> = async (formData) => {
     try {
-      await dispatch(create(formData));
+      await dispatch(create(formData as  Task));
       router.push('/task');
     } catch (error) {
       console.error('Error creating task:', error);
