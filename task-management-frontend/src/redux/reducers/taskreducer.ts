@@ -1,7 +1,8 @@
-import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes";
+import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes";
 import {taskPayload, type taskState } from "@/types";
 const taskState:taskState = {
     taskData: [],
+    filteredData:[],
     isLoading: false,
     error: null,
 };
@@ -118,6 +119,35 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
                 error: payload
             };
 
+            case FILTERED_TASKS_REQUEST:  
+            return {...state,loading:true}
+  
+            case FILTERED_TASKS_SUCCESS:
+                const { searchType,priority,status,dueDate } = payload;
+                const filteredData = state.taskData.filter(task => {
+                    const searchTerm = searchType?.toLowerCase().trim();
+        const matchesSearch = !searchTerm || 
+            (task.title ?? '').toLowerCase().includes(searchTerm) || 
+            (task.description && task.description.toLowerCase().includes(searchTerm));
+                    
+                    const matchesPriority = !priority ||
+                        task.priority?.toLowerCase() === priority.toLowerCase();
+                    
+                    const matchesStatus = !status ||
+                        task.status === status;
+                    
+                    const matchesDate = !dueDate ||
+                        new Date(task.dueDate).toISOString().split('T')[0] === 
+                        new Date(dueDate).toISOString().split('T')[0];
+                    
+                    return matchesSearch && matchesPriority && matchesStatus && matchesDate;
+                });
+                console.log(filteredData)
+                return{...state,filteredData:filteredData}
+            
+
+         case FILTERED_TASKS_FAILURE:
+            return {...state,loading:false,error:payload}     
         default:
             return state;
     }

@@ -1,5 +1,5 @@
-import {  Task } from "@/types"
-import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes"
+import {  searchTerm, Task } from "@/types"
+import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes"
 import { privateRequest} from "@/helpers/axios"
 import { Dispatch } from "redux";
 
@@ -72,3 +72,20 @@ export const getAll = () => async (dispatch: Dispatch) => {
       });
     }
   };
+
+  export const filteredTask = (searchTerm: searchTerm) => async (dispatch: Dispatch) => {
+    dispatch({ type: FILTERED_TASKS_REQUEST });
+    try {
+      dispatch({ 
+        type: FILTERED_TASKS_SUCCESS,
+        payload:searchTerm
+      });
+      
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      dispatch({ 
+        type: FILTERED_TASKS_FAILURE, 
+        payload: error.response?.data?.message || "Failed to filter tasks" 
+      });
+    }
+  }
