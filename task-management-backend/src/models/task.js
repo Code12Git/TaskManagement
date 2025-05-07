@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   title: {
     type: String,
     trim: true,
@@ -13,7 +17,7 @@ const taskSchema = new Schema({
   },
   dueDate: {
     type: Date,
-    required:true,
+    required: true,
   },
   priority: {
     type: String,
@@ -25,11 +29,12 @@ const taskSchema = new Schema({
     enum: ['completed', 'in-progress', 'not-started'],
     default: 'not-started'
   },
-  assignTo:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:'User'
+  assignTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
+
 module.exports = mongoose.model('Task', taskSchema);

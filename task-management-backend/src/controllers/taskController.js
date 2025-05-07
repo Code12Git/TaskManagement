@@ -2,7 +2,7 @@ const {responseManager, taskManager} = require('../services')
 
 const create = async(request,response) => {
     try{
-        const result = await taskManager.create(request.body)
+        const result = await taskManager.create(request.body,request.user)
         return responseManager.sendSuccessResponse(response,result,'Task Created Successfully!')
     }catch(err){
         return responseManager.sendErrorResponse(response,err,'Cannot Create Task')
@@ -37,6 +37,16 @@ const get = async(request,response) => {
         }
 }
 
+const getAllTaskByUser = async(request,response) => {
+    try{
+        const result = await taskManager.getAllTaskByUser(request.user)
+        return responseManager.sendSuccessResponse(response,result,'Task fetched Successfully!')  
+    }catch(err){
+        throw responseManager.sendErrorResponse(response,err,'Cannot fetch tasks')
+        
+    }
+}
+
 const getAll = async(request,response) => {
     try{
         const result = await taskManager.getAll()
@@ -48,4 +58,4 @@ const getAll = async(request,response) => {
 
 
 
-module.exports = {create,update,deleteOne,get,getAll}
+module.exports = {create,update,deleteOne,get,getAll,getAllTaskByUser}

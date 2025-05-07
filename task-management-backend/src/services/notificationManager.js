@@ -1,4 +1,5 @@
 // NotificationService.js
+const {logger} = require('../utils')
 class NotificationService {
     constructor(io) {
       if (!io) throw new Error('Socket.IO instance is required');
