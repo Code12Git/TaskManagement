@@ -34,6 +34,8 @@ import {
     
         case ASSIGN_USERS_FAILURE:
           return { ...state, loading: false, error: payload };
+
+
       default:
         return state;
     }

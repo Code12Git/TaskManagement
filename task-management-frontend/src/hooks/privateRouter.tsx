@@ -1,8 +1,6 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
 import LoadingSpinner from '@/app/LoadingSpinner';
 
 const publicRoutes = ['/login', '/register', '/', '/forgot-password'];
@@ -11,15 +9,15 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
   const router = useRouter();
   const pathname = usePathname();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const { userData, token } = useSelector((state: RootState) => state.auth);
-
+  const user = localStorage.getItem('user')
+  const token = localStorage.getItem('token')
   useEffect(() => {
      if (publicRoutes.includes(pathname)) {
       setIsCheckingAuth(false);
       return;
     }
 
-     if (!userData || !token) {
+     if (!user || !token) {
       router.push('/login?redirect=' + encodeURIComponent(pathname));
       return;
     }
@@ -31,7 +29,7 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     }
 
     setIsCheckingAuth(false);
-  }, [userData, token, router, pathname]);
+  }, [user, token, router, pathname]);
 
   if (isCheckingAuth) {
     return <LoadingSpinner />;

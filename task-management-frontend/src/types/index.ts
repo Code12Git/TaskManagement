@@ -78,6 +78,12 @@ export interface userDataPayload{
   user?:User
 }
 
+export interface  searchTerm {
+  searchType:string
+  status: string;
+  priority: string;
+  dueDate: string;
+}
 // Your existing task interfaces
 export interface Task {
   _id?:string
@@ -93,6 +99,7 @@ export interface Task {
 
 export interface taskState {
   taskData: Task[];
+  filteredData:Task[]
   isLoading: boolean;
   error: string | null;  // Changed to string for consistency
 }
@@ -100,6 +107,10 @@ export interface taskState {
 export interface taskPayload {
   id?: string;
   taskData?: Task;
+  searchType?:string;
+  status?:string;
+  priority?:string;
+  dueDate?:string
 }
 
 export type ErrorType = 
