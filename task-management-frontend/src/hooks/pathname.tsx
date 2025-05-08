@@ -1,4 +1,5 @@
 'use client';
+
 import Navbar from '@/base/Navbar';
 import { usePathname } from 'next/navigation';
 
@@ -10,10 +11,11 @@ export const usePath = () => {
 export const PathnameProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePath();
   const isHomepage = pathname === '/';
+  const isLogin = pathname === '/login' || pathname === '/register';  
   
   return (
     <>
-      {!isHomepage && <Navbar />}
+      {!(isHomepage || isLogin) && <Navbar />}
       {children}
     </>
   );
