@@ -11,58 +11,73 @@ const SocketService = require('./services/socketService');
 const app = express();
 const server = createServer(app);
 
-// Configure CORS properly
+// Configure CORS properly - UPDATED ORIGINS
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
-  'https://task-management-beta-lime.vercel.app',
-  'http://localhost:3000' // Add localhost for development
+  'https://task-management-frontend-gilt.vercel.app', 
 ];
 
+// ENHANCED CORS OPTIONS
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Allow all Vercel deployments and localhost
+    if (!origin || 
+        allowedOrigins.some(allowed => origin === allowed || origin.endsWith('.vercel.app')) ||
+        origin.includes('localhost')) {
+      return callback(null, true);
     }
+    callback(new Error(`Origin ${origin} not allowed by CORS`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200,
+  preflightContinue: false
 };
 
-// Apply CORS middleware
+// Apply CORS middleware - MUST COME BEFORE ROUTES
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Socket.io configuration
 const io = new socketIo.Server(server, {
-  cors: corsOptions
+  cors: {
+    origin: corsOptions.origin,
+    methods: corsOptions.methods,
+    credentials: corsOptions.credentials
+  },
+  transports: ['websocket', 'polling']
 });
-new SocketService(io); 
+new SocketService(io);
 
 const PORT = fromEnv('PORT') || 3002;
 
+// Database connection
 connectDB().catch(err => {
   logger.error('Database connection failed', err);
   process.exit(1);
 });
 
+// Middleware
 app.use(express.json());
-app.options('*', cors(corsOptions)); // Enable preflight for all routes
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/api', routes); 
+// Routes
+app.use('/api', routes);
 
+// Health check
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'UP',
     timestamp: new Date().toISOString(),
-    service: 'Your Service Name'
+    service: 'Task Management API',
+    allowedOrigins: allowedOrigins
   });
 });
 
-app.set('io', io);
-
+// Start server
 server.listen(PORT, () => {
   logger.info(`🚀 Server running at PORT: ${PORT}`);
+  logger.info(`Allowed origins: ${allowedOrigins.join(', ')}`);
 });
 
 module.exports = { server, io };
