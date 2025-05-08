@@ -7,8 +7,10 @@ const taskSchema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters')
     .max(500, 'Description cannot exceed 500 characters'),
 
-  dueDate: z.string(),
-
+    dueDate: z.coerce.date()
+    .min(new Date(), "Due date must be in future")
+    .refine(date => date.getFullYear() < 2030, "Max year is 2030"),
+    
   priority: z.enum(['low', 'medium', 'high']),
 
   status: z.enum(['not-started', 'in-progress', 'completed']),

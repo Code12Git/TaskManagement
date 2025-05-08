@@ -1,5 +1,7 @@
 // types/index.ts
 
+
+
 export interface User {
   _id?: string;
   name: string;
@@ -41,6 +43,10 @@ export interface userState {
   users: User[];
   loading:boolean;
   error:null
+}
+export interface modalState{
+  modalType:string;
+  modalProps:boolean
 }
 
 export interface UserCredentials {
@@ -89,12 +95,12 @@ export interface Task {
   _id?:string
   title?: string;
   description: string;
-  dueDate: string;
+  dueDate: Date;
   priority?: 'low' | 'medium' | 'high';
   status?: 'not-started' | 'in-progress' | 'completed';
-  assignedTo:string;
+  assignedTo?:string;
   userId?:string
-  assignTo:string
+  assignTo?:string
 }
 
 export interface taskState {
@@ -106,11 +112,13 @@ export interface taskState {
 
 export interface taskPayload {
   id?: string;
+  _id?:string;
   taskData?: Task;
   searchType?:string;
   status?:string;
   priority?:string;
-  dueDate?:string
+  dueDate?:string;
+  task?:string;
 }
 
 export type ErrorType = 

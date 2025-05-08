@@ -83,11 +83,12 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
                 error: null
             };
         case UPDATE_TASK_SUCCESS:
+            console.log(payload)
             return {
                 ...state,
                 isLoading: false,
                 taskData: state.taskData.map(task => 
-                    task._id === payload.id ? payload : task
+                    task._id === payload._id ? payload : task
                 ),
                 error: null
             };

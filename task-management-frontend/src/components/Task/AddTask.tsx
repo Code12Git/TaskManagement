@@ -24,7 +24,7 @@ const AddTask = () => {
     defaultValues: {
       title: '',
       description: '',
-      dueDate: '',
+      dueDate: new Date(),
       priority: undefined,
       status: undefined,
     },
