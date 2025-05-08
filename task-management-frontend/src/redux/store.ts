@@ -4,9 +4,8 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { storage } from '@/lib/storage';
 import taskReducer from './reducers/taskreducer';
 import authReducer from './reducers/authreducer';
-import { authState, modalState, taskState, userState } from '@/types';
+import { authState,  taskState, userState } from '@/types';
 import userReducer from './reducers/userreducer';
-import modalReducer from './reducers/modalreducer';
 
 const persistConfig = {
   key: 'root',
@@ -18,7 +17,6 @@ const rootReducer = combineReducers({
   tasks: taskReducer as unknown as Reducer<taskState>,
   auth: authReducer as unknown as Reducer<authState>,
   user:userReducer as unknown as Reducer<userState>,
-  modal:modalReducer as unknown as Reducer<modalState>
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
