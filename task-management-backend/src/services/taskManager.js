@@ -20,25 +20,30 @@ const create = async(body,user) => {
     }
 }
 
-
-const update = async(body,params) => {
-    const {title,description,dueDate,priority,status} = body;
-    const {id} = params
-    try{
-        const updatedTask = await taskModel.findByIdAndUpdate(id,{
-            title,
-            description,
-            dueDate,
-            priority,
-            status
-        })
-        if(!updatedTask) throw new AppError({...NOT_FOUND,message:'Task not found'})
-         return updatedTask   
-    }catch(err){
-        throw err;
+const update = async (body, params) => {
+    const { title, description, dueDate, priority, status } = body;
+    const { id } = params;
+    
+    try {
+      const updatedTask = await taskModel.findByIdAndUpdate(
+        id,
+        {
+          title,
+          description,
+          dueDate: new Date(dueDate), 
+          priority,
+          status
+        },
+        { new: true, runValidators: true }  
+      );
+      
+      if (!updatedTask) throw new AppError({ ...NOT_FOUND, message: 'Task not found' });
+      
+      return updatedTask;
+    } catch (err) {
+      throw err;
     }
-}
-
+  };
 const deleteOne = async(params) => {
     const {id} = params;
     try{

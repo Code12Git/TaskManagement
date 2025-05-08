@@ -31,10 +31,10 @@ export const deleteOne = (id:string) => async (dispatch: Dispatch) =>  {
 }
 
 export const update= (data:Task,id:string) => async (dispatch:Dispatch) => {
-    dispatch({type:UPDATE_TASK_REQUEST,payload:{id:id,task:data}})
+    dispatch({type:UPDATE_TASK_REQUEST})
     try{
-        const updatedTask = await privateRequest.put(`/tasks/${id}`,id)
-        dispatch({type:UPDATE_TASK_SUCCESS,payload:updatedTask})
+        const updatedTask = await privateRequest.put(`/tasks/${id}`,data)
+        dispatch({type:UPDATE_TASK_SUCCESS,payload:updatedTask.data.data})
     }catch(err){
         const error = err as { response: { data: { code: { message: string } } } };
         dispatch({type:UPDATE_TASK_FAILURE,payload:error.response.data.code.message || "Something went wrong"})

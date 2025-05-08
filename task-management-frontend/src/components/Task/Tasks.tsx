@@ -25,7 +25,6 @@ const Tasks = () => {
     };
   });
 
-  console.log(taskData)
   useEffect(() => {
     dispatch(getAll());
   }, [dispatch]);

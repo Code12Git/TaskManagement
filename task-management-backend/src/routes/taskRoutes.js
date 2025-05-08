@@ -9,7 +9,7 @@ router.post('/',verifyData(taskSchema),verifyToken,taskController.create)
 
 router.delete('/:id',verifyToken,taskController.deleteOne)
 
-router.put('/:id',verifyData(taskSchema),verifyToken,taskController.update)
+router.put('/:id',verifyToken,taskController.update)
 
 router.get('/allTasks',taskController.getAll)
 
