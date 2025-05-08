@@ -13,7 +13,7 @@ const server = createServer(app);
 
 const io = new socketIo.Server(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'https://task-management-beta-lime.vercel.app',
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -29,7 +29,7 @@ connectDB().catch(err => {
 
  app.use(express.json());
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*', 
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || 'https://task-management-beta-lime.vercel.app', 
   optionsSuccessStatus: 200
 }));
 
