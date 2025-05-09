@@ -7,43 +7,19 @@ const connectDB = require('./config/connection');
 const routes = require('./routes');
 const cors = require('cors');
 const SocketService = require('./services/socketService');
-
 const app = express();
 const server = createServer(app);
 
-// Configure CORS properly - UPDATED ORIGINS
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
-  'https://task-management-frontend-gilt.vercel.app', 
-];
+// ✅ Allow all origins for REST API
+app.use(cors()); // Allow all
+// app.options('*', cors()); // Allow preflight for all routes
 
-// ENHANCED CORS OPTIONS
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow all Vercel deployments and localhost
-    if (!origin || 
-        allowedOrigins.some(allowed => origin === allowed || origin.endsWith('.vercel.app')) ||
-        origin.includes('localhost')) {
-      return callback(null, true);
-    }
-    callback(new Error(`Origin ${origin} not allowed by CORS`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200,
-  preflightContinue: false
-};
-
-// Apply CORS middleware - MUST COME BEFORE ROUTES
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-// Socket.io configuration
+// ✅ Allow all origins for Socket.io
 const io = new socketIo.Server(server, {
   cors: {
-    origin: corsOptions.origin,
-    methods: corsOptions.methods,
-    credentials: corsOptions.credentials
+    origin: '*', // Allow all
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    credentials: true,
   },
   transports: ['websocket', 'polling']
 });
@@ -70,14 +46,14 @@ app.get('/', (req, res) => {
     status: 'UP',
     timestamp: new Date().toISOString(),
     service: 'Task Management API',
-    allowedOrigins: allowedOrigins
+    allowedOrigins: '*'
   });
 });
 
 // Start server
 server.listen(PORT, () => {
   logger.info(`🚀 Server running at PORT: ${PORT}`);
-  logger.info(`Allowed origins: ${allowedOrigins.join(', ')}`);
+  logger.info(`Allowed origins: *`);
 });
 
 module.exports = { server, io };
