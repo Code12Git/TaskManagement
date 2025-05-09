@@ -11,23 +11,51 @@ const app = express();
 const server = createServer(app);
 
 // ✅ Allow all origins for REST API
-app.use(cors({
-  origin: 'https://task-management-frontend-5hsxo9uol-code12gits-projects.vercel.app',
+const allowedOrigins = fromEnv('ALLOWED_ORIGINS')?.split(',') || [];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (
+      !origin ||
+      origin.includes('localhost') ||
+      origin.endsWith('.vercel.app') ||
+      allowedOrigins.includes(origin)
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
+
 // app.options('*', cors()); // Allow preflight for all routes
 
 // ✅ Allow all origins for Socket.io
 const io = new socketIo.Server(server, {
   cors: {
-    origin: 'https://task-management-frontend-5hsxo9uol-code12gits-projects.vercel.app', // Allow all
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        origin.includes('localhost') ||
+        origin.endsWith('.vercel.app') ||
+        allowedOrigins.includes(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Socket origin ${origin} not allowed by CORS`));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    credentials: true,
+    credentials: true
   },
   transports: ['websocket', 'polling']
 });
+
 new SocketService(io);
 
 const PORT = fromEnv('PORT') || 3002;
