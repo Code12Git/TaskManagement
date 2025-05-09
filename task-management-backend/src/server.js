@@ -83,6 +83,9 @@ app.get('/', (req, res) => {
   });
 });
 
+app.set('io', io);
+
+
 // Start server
 server.listen(PORT, () => {
   logger.info(`🚀 Server running at PORT: ${PORT}`);

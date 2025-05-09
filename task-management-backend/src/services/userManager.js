@@ -23,7 +23,6 @@ const assignUser = async(body,io) => {
         if(!user) throw new AppError({...NOT_FOUND,message:'User not found'})
         task.assignTo = userId    
         await task.save()
-        console.log(task)
         return {...task,name:user.name,email:user.email};
     }catch(err){
         throw err;
