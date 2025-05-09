@@ -11,13 +11,18 @@ const app = express();
 const server = createServer(app);
 
 // ✅ Allow all origins for REST API
-app.use(cors()); // Allow all
+app.use(cors({
+  origin: 'https://task-management-frontend-5hsxo9uol-code12gits-projects.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true
+}));
 // app.options('*', cors()); // Allow preflight for all routes
 
 // ✅ Allow all origins for Socket.io
 const io = new socketIo.Server(server, {
   cors: {
-    origin: '*', // Allow all
+    origin: 'https://task-management-frontend-5hsxo9uol-code12gits-projects.vercel.app', // Allow all
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     credentials: true,
   },
