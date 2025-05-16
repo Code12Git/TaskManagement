@@ -1,5 +1,8 @@
 const {responseManager, userManager} = require('../services')
 const NotificationService = require('../services/notificationManager')
+
+
+// Get User
 const getUser = async(request,response) => {
     try{
         const result = await userManager.getUser()
@@ -36,4 +39,25 @@ const assignUser = async (request, response) => {
     }
 };
 
-module.exports = {getUser,assignUser}
+// Count Users
+
+const countUsers = async(request,response) => {
+    try{
+        const result = await userManager.countUsers()
+        return responseManager.sendSuccessResponse(response,result,'User count fetched successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Cannot get all user')
+    }
+}
+
+const deleteUser = async(request,response) => {
+    try{
+        const result = await userManager.deleteUser(request.params)
+        return responseManager.sendSuccessResponse(response,result,'User deleted successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Cannot delete user')
+    }
+}
+
+
+module.exports = {getUser,assignUser,countUsers,deleteUser}

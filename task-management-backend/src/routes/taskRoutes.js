@@ -2,7 +2,7 @@ const express = require('express');
 const { taskSchema } = require('../validation');
 const { taskController } = require('../controllers');
 const {verifyData} = require('../middleware');
-const verifyToken = require('../middleware/verifyToken');
+const {verifyToken} = require('../middleware/verifyToken');
 const router = express.Router();
 
 router.post('/',verifyData(taskSchema),verifyToken,taskController.create)

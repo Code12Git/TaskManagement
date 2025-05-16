@@ -14,6 +14,21 @@ const getUser = async() => {
     }
 }
 
+
+const deleteUser = async() => {
+  const {userId} = params;
+  try{
+    const user = await userModel.findByIdAndDelete(userId)
+    if(!user) throw new AppError({...NOT_FOUND,message:'User not found'})
+    const task = await taskModel.findById({assignTo:userId})
+    if(!task) throw new AppError({...NOT_FOUND,message:'Task not found'})
+    task.assignTo = null
+    return user;
+  }catch(err){
+    throw err;
+  }
+}
+
 const assignUser = async(body,io) => {
     const {taskId,userId} = body;
     try{
@@ -30,4 +45,51 @@ const assignUser = async(body,io) => {
 }
 
 
-module.exports = {getUser,assignUser}
+
+const countUsers = async() => {
+  console.log("countUsers");
+    try{
+      const usersByMonth = await userModel.aggregate([
+        {
+          $group: { // Group by year and month
+            _id: {
+              year: { $year: "$createdAt" }, // Extract year from createdAt
+              month: { $month: "$createdAt" } // Extract month from createdAt
+            },
+            count: { $sum: 1 } // Count users in each month
+          }
+        },
+        {
+          $sort: { "_id.year": 1, "_id.month": 1 } // Sort by year and month
+        },
+        {
+          $project: { // Project the desired fields
+            _id: 0, // Exclude the default _id field
+            month: { // Format month as MM
+              $concat: [ // Concatenate year and month
+                { $toString: "$_id.year" }, // Convert year to string
+                "-", // Add a hyphen
+                {
+                  $cond: [ // Check if month is less than 10
+                    { $lt: ["$_id.month", 10] }, // If month is less than 10
+                    { $concat: ["0", { $toString: "$_id.month" }] }, // Add a leading zero
+                    { $toString: "$_id.month" } // Otherwise, convert month to string
+                  ]
+                }
+              ]
+            },
+            count: 1 // Include the count field
+          }
+        }
+      ]);
+      console.log(usersByMonth)
+      
+        if(!usersByMonth) throw new AppError({...NOT_FOUND,message:"No user exist in database"})
+        return usersByMonth;
+    }catch(err){
+      throw err;
+    }
+}
+
+
+module.exports = {getUser,assignUser,countUsers,deleteUser}

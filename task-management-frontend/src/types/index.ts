@@ -32,9 +32,9 @@ export interface AuthError {
 }
 
 export interface authState {
-  userData: User | null;  // Changed from User[] to User since auth deals with single user
+  userData: User | null;  
   isLoading: boolean;
-  error: string | null;   // Changed from boolean to string for error messages
+  error: string | null;   
   isAuthenticated: boolean;
   token: string | null;
 }

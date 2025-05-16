@@ -9,6 +9,7 @@ export const create = (data: Task) => async (dispatch: Dispatch) => {
     try {
       const response = await privateRequest.post('/tasks', data); 
       const task = response.data;
+      console.log(task)
       dispatch({ type: ADD_TASK_SUCCESS, payload: task });
     } catch (err) {
         const error = err as { response: { data: { code: { message: string } } } };

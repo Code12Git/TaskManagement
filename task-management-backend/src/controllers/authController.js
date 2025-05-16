@@ -18,7 +18,15 @@ const login = async(request,response) => {
     }
 }
 
+const adminLogin = async(request,response) => {
+    try{
+        const result = await authManager.adminLogin()
+        return responseManager.sendSuccessResponse(response,result,'Admin login successfull')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Admin Login Error')
+    }
+}
 
 
 
-module.exports = {register,login}
+module.exports = { register,login,adminLogin }

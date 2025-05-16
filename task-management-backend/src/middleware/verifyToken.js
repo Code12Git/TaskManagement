@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { userModel } = require("../models");
 const { NO_AUTH_HEADER, INVALID_ACCESS_TOKEN, NOT_FOUND } = require("../utils/errors");
 const _ = require("lodash");
+
 const verifyToken = async (req, res, next) => {
   try {
       const { authorization } = req.headers;
@@ -30,4 +31,17 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports =  verifyToken
+
+const verifyTokenAndAdmin = (req, res, next) => {
+  verifyToken(req, res, (err) => {
+    if (err) return next(err);
+    console.log(req.user.role)
+    if (req.user?.role === "admin") {
+      console.log(req.user.role)
+      return next();
+    } else {
+      return next(new AppError("You are not allowed to perform this action", 403));
+    }
+  });
+};
+module.exports =  {verifyToken,verifyTokenAndAdmin}
