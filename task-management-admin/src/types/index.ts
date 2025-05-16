@@ -19,6 +19,7 @@ export interface ApiError {
   }
 
   export interface userPayload {
+    includes(_id: string | undefined): unknown;
     count?: null | [];
     forEach(arg0: (item: { count: number; month: string; }) => void): unknown;
     user?: User;
@@ -34,7 +35,7 @@ export interface ApiError {
   }
 
   export interface User {
-    _id?: string;
+    _id: string;
     name: string;
     username: string;
     email: string;
@@ -45,7 +46,7 @@ export interface ApiError {
   }
 
   export interface userState {
-    userData: User | null;  
+    userData: User[] | null;  
     isLoading: boolean;
     error: string | null;  
     count:number | null;

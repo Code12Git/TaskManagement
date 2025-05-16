@@ -1,5 +1,8 @@
 import { userPayload, userState } from "@/types/index";
 import {
+  DELETE_USERS_FAILURE,
+  DELETE_USERS_REQUEST,
+  DELETE_USERS_SUCCESS,
   GET_USERS_COUNT_FAILURE,
  GET_USERS_COUNT_REQUEST,
  GET_USERS_COUNT_SUCCESS,
@@ -73,7 +76,29 @@ const userReducer = (state = initialState, { type, payload }: { type: string; pa
         error: payload
       };
 
+    // Delete users
 
+    case DELETE_USERS_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null
+      }  
+    
+    case DELETE_USERS_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        userData: state.userData ? state.userData.filter((user) => !payload.includes(user._id)) : [],
+        error: null
+      }  
+
+    case DELETE_USERS_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: payload
+      }
     default:
       return state;
   }

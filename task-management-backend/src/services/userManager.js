@@ -15,11 +15,14 @@ const getUser = async() => {
 }
 
 
-const deleteUser = async() => {
+const deleteUser = async(params) => {
   const {userId} = params;
+  console.log(userId)
   try{
     const user = await userModel.findByIdAndDelete(userId)
+    console.log(user)
     if(!user) throw new AppError({...NOT_FOUND,message:'User not found'})
+      console.log(user)
     const task = await taskModel.findById({assignTo:userId})
     if(!task) throw new AppError({...NOT_FOUND,message:'Task not found'})
     task.assignTo = null

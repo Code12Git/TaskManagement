@@ -2,11 +2,11 @@
 
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
-import { fetchAllUsers } from '@/redux/actions/userAction';
+import { useAppDispatch} from '@/hooks/reduxHooks';
+import { deleteUsers, fetchAllUsers } from '@/redux/actions/userAction';
 import { User } from '@/types';
 import { format } from 'date-fns';
-import { CirclePlus,Delete,Pencil } from 'lucide-react';
+import {Delete,Pencil } from 'lucide-react';
 
 const UserDetails = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +31,10 @@ const UserDetails = () => {
     };
     fetchUsers();
   }, [dispatch]);
+
+  const deleteHandler = async (id: string) => {
+    dispatch(deleteUsers(id));
+  }
 
   // Animation variants
   const containerVariants = {
@@ -98,7 +102,7 @@ const UserDetails = () => {
 
   // Get filtered keys from the first user (excluding sensitive/irrelevant fields)
   const filteredKeys = users.length > 0 
-  ? [...Object.keys(users[0]).filter(key => !['password', '__v', '_id', 'updatedAt'].includes(key)), 'actions']
+  ? [...Object.keys(users[0]).filter(key => !['password', '__v', 'updatedAt'].includes(key)), 'actions']
   : [];
 
 
@@ -145,7 +149,9 @@ const UserDetails = () => {
                   whileHover={{ scale: 1.01, backgroundColor: 'rgba(249, 250, 251, 0.8)' }}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  {filteredKeys.map((key, i) => (
+                  {filteredKeys.map((key, i) => {
+                    console.log(key)
+                    return(
                     <td key={i} className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-800">
                         {key === 'createdAt' || key === 'updatedAt' 
@@ -153,13 +159,13 @@ const UserDetails = () => {
                           : user[key as keyof User]}
                           {key === 'actions' && 
                           <div className='flex items-center gap-4'>
-                          <button className='text-red-400 cursor-pointer'><Delete  /></button>
+                          <button onClick={()=>deleteHandler(user._id)} className='text-red-400 cursor-pointer'><Delete  /></button>
                           <button className='text-blue-400 cursor-pointer'><Pencil /></button>
                           </div>
                           }
                       </div>
                     </td>
-                  ))}
+                  )})}
                 </motion.tr>
               ))}
             </motion.tbody>
