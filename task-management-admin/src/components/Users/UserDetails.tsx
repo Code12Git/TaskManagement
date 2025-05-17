@@ -1,27 +1,25 @@
 'use client'
 
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useAppDispatch} from '@/hooks/reduxHooks';
+import { motion, Variants } from 'framer-motion';
+import { useAppDispatch, useAppSelector} from '@/hooks/reduxHooks';
 import { deleteUsers, fetchAllUsers } from '@/redux/actions/userAction';
 import { User } from '@/types';
 import { format } from 'date-fns';
-import {Delete,Pencil } from 'lucide-react';
+import {Delete } from 'lucide-react';
+import EditRole from '@/ui/modal/user/EditRole';
 
 const UserDetails = () => {
   const dispatch = useAppDispatch();
-  const [users, setUsers] = React.useState<User[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const {userData} = useAppSelector(state=>state.user)
   const [error, setError] = React.useState<string | null>(null);
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const res = await dispatch(fetchAllUsers());
-        if (Array.isArray(res)) {
-          setUsers(res);
-        }
+         await dispatch(fetchAllUsers());
+   
       } catch (err) {
         setError('Failed to fetch users');
         console.error(err);
@@ -31,6 +29,7 @@ const UserDetails = () => {
     };
     fetchUsers();
   }, [dispatch]);
+  console.log(userData)
 
   const deleteHandler = async (id: string) => {
     dispatch(deleteUsers(id));
@@ -57,7 +56,7 @@ const UserDetails = () => {
     }
   };
 
-  const gradientVariants = {
+  const gradientVariants:Variants = {
     initial: { backgroundPosition: '0% 50%' },
     animate: {
       backgroundPosition: '100% 50%',
@@ -92,7 +91,7 @@ const UserDetails = () => {
     );
   }
 
-  if (!users || users.length === 0) {
+  if (!userData || userData.length === 0) {
     return (
       <div className="p-6 max-w-md mx-auto bg-blue-50 rounded-xl shadow-md">
         <div className="text-blue-600 font-medium">No users found</div>
@@ -101,8 +100,8 @@ const UserDetails = () => {
   }
 
   // Get filtered keys from the first user (excluding sensitive/irrelevant fields)
-  const filteredKeys = users.length > 0 
-  ? [...Object.keys(users[0]).filter(key => !['password', '__v', 'updatedAt'].includes(key)), 'actions']
+  const filteredKeys = userData?.length > 0 
+  ? [...Object.keys(userData[0]).filter(key => !['password', '__v', 'updatedAt'].includes(key)), 'actions']
   : [];
 
 
@@ -142,30 +141,41 @@ const UserDetails = () => {
 
             {/* Animated Table Body */}
             <motion.tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user, index) => (
+              {userData?.map((user, index) => (
                 <motion.tr
                   key={index}
                   variants={rowVariants}
                   whileHover={{ scale: 1.01, backgroundColor: 'rgba(249, 250, 251, 0.8)' }}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  {filteredKeys.map((key, i) => {
-                    console.log(key)
-                    return(
-                    <td key={i} className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-800">
-                        {key === 'createdAt' || key === 'updatedAt' 
-                          ? format(new Date(user[key]), 'PPpp') 
-                          : user[key as keyof User]}
-                          {key === 'actions' && 
-                          <div className='flex items-center gap-4'>
-                          <button onClick={()=>deleteHandler(user._id)} className='text-red-400 cursor-pointer'><Delete  /></button>
-                          <button className='text-blue-400 cursor-pointer'><Pencil /></button>
+                  {filteredKeys?.map((key, i) => {
+                    if (key === 'createdAt' || key === 'updatedAt') {
+                      return (
+                        <td key={i} className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-800">
+                          {user[key] ? format(new Date(user[key]!), 'MMM dd, yyyy') : 'N/A'}
                           </div>
-                          }
-                      </div>
-                    </td>
-                  )})}
+                        </td>
+                      );
+                    } else if (key === 'actions') {
+                      return (
+                        <td key={i} className="px-6 py-4 whitespace-nowrap">
+                          <div className='flex items-center gap-4'>
+                            <button onClick={()=>deleteHandler(user._id)} className='text-red-400 cursor-pointer'><Delete  /></button>
+                            <button className='text-blue-400 cursor-pointer'><EditRole user={user} /></button>
+                          </div>
+                        </td>
+                      );
+                    } else {
+                      return (
+                        <td key={i} className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-800">
+                            {user[key as keyof User] as React.ReactNode}
+                          </div>
+                        </td>
+                      );
+                    }
+                  })}
                 </motion.tr>
               ))}
             </motion.tbody>

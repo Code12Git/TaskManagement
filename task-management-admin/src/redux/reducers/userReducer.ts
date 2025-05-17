@@ -8,7 +8,10 @@ import {
  GET_USERS_COUNT_SUCCESS,
  GET_USERS_FAILURE,
  GET_USERS_REQUEST,
- GET_USERS_SUCCESS
+ GET_USERS_SUCCESS,
+ UPDATE_USERS_ROLE_FAILURE,
+ UPDATE_USERS_ROLE_REQUEST,
+ UPDATE_USERS_ROLE_SUCCESS
 } from "../actionTypes/actionTypes";
 
 const initialState: userState = {
@@ -17,6 +20,8 @@ const initialState: userState = {
   error: null,
   count:null
 };
+
+console.log(initialState.userData)
 
 const userReducer = (state = initialState, { type, payload }: { type: string; payload: userPayload }) => {
   switch (type) {
@@ -99,6 +104,32 @@ const userReducer = (state = initialState, { type, payload }: { type: string; pa
         isLoading: false,
         error: payload
       }
+    case UPDATE_USERS_ROLE_REQUEST:
+      return{
+        ...state,
+        isLoading:true,
+      }
+      case UPDATE_USERS_ROLE_SUCCESS: {
+        const updatedUser = payload as { _id: string; role: string };
+      
+        return {
+          ...state,
+          userData: state?.userData?.map(user =>
+            user._id.toString() === updatedUser._id.toString()
+              ? { ...user, role: updatedUser.role }
+              : user
+          ),
+          loading: false,
+        };
+      }
+      
+      
+    case UPDATE_USERS_ROLE_FAILURE:
+      return {
+        ...state,
+        isLoading:false,
+        error:payload
+      }  
     default:
       return state;
   }

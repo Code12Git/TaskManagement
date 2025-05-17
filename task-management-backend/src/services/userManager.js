@@ -94,5 +94,18 @@ const countUsers = async() => {
     }
 }
 
+const changeRole = async(body,params) => {
+  const {userId} = params;
+  console.log("Body:",body)
+  const {role} = body;
+  try{
+    const userRole = await userModel.findByIdAndUpdate(userId,{role:role},{new:true})
+    if(!userRole) throw new AppError({...NOT_FOUND,message:'User not found'})
+    return userRole;  
+  }catch(err){
+    throw err;
+  }
+}
 
-module.exports = {getUser,assignUser,countUsers,deleteUser}
+
+module.exports = {getUser,assignUser,countUsers,deleteUser,changeRole}

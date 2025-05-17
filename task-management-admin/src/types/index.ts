@@ -21,6 +21,8 @@ export interface ApiError {
   export interface userPayload {
     includes(_id: string | undefined): unknown;
     count?: null | [];
+    _id?:string;
+    role?:string;
     forEach(arg0: (item: { count: number; month: string; }) => void): unknown;
     user?: User;
     error?: string;

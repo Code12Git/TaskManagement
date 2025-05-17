@@ -59,5 +59,14 @@ const deleteUser = async(request,response) => {
     }
 }
 
+const changeRole = async(request,response) => {
+    try{
+        const result = await userManager.changeRole(request.body,request.params)
+        return responseManager.sendSuccessResponse(response,result,'Role Changed Successfully')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Error fetching user')
+    }
+}
 
-module.exports = {getUser,assignUser,countUsers,deleteUser}
+
+module.exports = {getUser,assignUser,countUsers,deleteUser,changeRole}

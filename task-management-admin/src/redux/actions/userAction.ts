@@ -9,7 +9,10 @@ import {
   GET_USERS_COUNT_SUCCESS,
   GET_USERS_FAILURE,
   GET_USERS_REQUEST,
-  GET_USERS_SUCCESS
+  GET_USERS_SUCCESS,
+  UPDATE_USERS_ROLE_FAILURE,
+  UPDATE_USERS_ROLE_REQUEST,
+  UPDATE_USERS_ROLE_SUCCESS
 } from '../actionTypes/actionTypes'
 import { AuthResponse  } from '@/types/index';
 import { ApiError } from '@/types/index';
@@ -50,7 +53,7 @@ export const fetchAllUsers = () => async(dispatch:Dispatch) => {
       type: GET_USERS_SUCCESS,
       payload:result.data.data
     })
-    return result.data.data
+    
   }catch (err) {
     const error = err as ApiError;
     dispatch({
@@ -85,5 +88,26 @@ export const deleteUsers = (userId:string) => async(dispatch:Dispatch) => {
               'Delete User Failed'
     });
     toast.error("Error Deleting User Successfully")
+  }
+}
+
+
+export const updateUsers = (userId:string,role:string) => async(dispatch:Dispatch) => {
+  dispatch({type:UPDATE_USERS_ROLE_REQUEST})
+  console.log(role)
+  try{
+    const res = await privateRequest.put(`/user/${userId}`,{role})
+    dispatch({type:UPDATE_USERS_ROLE_SUCCESS,payload:res.data.data})
+    toast.success('Role updated Successfully')
+  }catch(err){
+    const error = err as ApiError;
+    dispatch({
+      type: UPDATE_USERS_ROLE_FAILURE,
+      payload: error.response?.data?.code?.message || 
+              error.response?.data?.message || 
+              error.message || 
+              'Update User Role Failed'
+    });
+    toast.error("Error Updating User Role Successfully")
   }
 }
