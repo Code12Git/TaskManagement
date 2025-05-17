@@ -18,6 +18,17 @@ export interface ApiError {
     id?: string;
   }
 
+export interface taskState  {
+  tasks: Task[],
+  isLoading:boolean,
+  error:null
+}
+
+
+export interface taskPayload {
+  isLoading:boolean
+}
+
   export interface userPayload {
     includes(_id: string | undefined): unknown;
     count?: null | [];
@@ -71,4 +82,17 @@ export interface ApiError {
       token: string;
     };
     statusCode:number
+  }
+  
+  export interface Task {
+    _id: string;
+    assignTo: string;
+    createdAt: string;
+    description: string;
+    dueDate: string;
+    priority: 'low' | 'medium' | 'high';
+    status: 'not-started' | 'in-progress' | 'completed';
+    title: string;
+    updatedAt: string;
+    userId: string;
   }
