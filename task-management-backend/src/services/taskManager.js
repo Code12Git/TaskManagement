@@ -37,13 +37,14 @@ const update = async (body, params) => {
         { new: true, runValidators: true }  
       );
       
-      if (!updatedTask) throw new AppError({ ...NOT_FOUND, message: 'Task not found' });
-      
+      if (!updatedTask) throw new AppError({ ...NOT_FOUND, message: 'Task not found' });      
       return updatedTask;
     } catch (err) {
       throw err;
     }
   };
+
+  
 const deleteOne = async(params) => {
     const {id} = params;
     try{

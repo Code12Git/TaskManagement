@@ -2,9 +2,12 @@
 
 import { Task } from '@/types';
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PencilIcon, TrashIcon, CircleX } from 'lucide-react';
+import UpdateTask from './UpdateTask';
+import { useAppDispatch } from '@/hooks/reduxHooks';
+import { deleteTasks } from '@/redux/actions/taskAction';
 
 interface TaskProps {
   open: boolean;
@@ -14,16 +17,21 @@ interface TaskProps {
 
 export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
   const closeModal = () => setIsOpen(false);
-
+  const [updateModal,setIsUpdateModal] = useState(false)  
+  const dispatch = useAppDispatch()
   const handleUpdate = () => {
     // Trigger update logic
-    alert('Update clicked');
+    setIsUpdateModal(true)
+
   };
 
-  const handleDelete = () => {
+  const handleDelete = (id:string) => {
     // Trigger delete logic
-    alert('Delete clicked');
+    dispatch(deleteTasks(id))
+    setIsOpen(false)
   };
+
+  console.log(updateModal)
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleString('en-GB', {
@@ -98,31 +106,31 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
                 {[
-                  { label: 'Title', value: task.title },
-                  { label: 'Task ID', value: task._id },
+                  { label: 'Title', value: task?.title },
+                  { label: 'Task ID', value: task?._id },
                   { 
                     label: 'Description', 
-                    value: task.description,
+                    value: task?.description,
                     colSpan: 'sm:col-span-2',
                     className: 'whitespace-pre-wrap'
                   },
                   { 
                     label: 'Status', 
-                    value: task.status,
+                    value: task?.status,
                     badge: true,
-                    color: statusColors[task.status.toLowerCase()] || 'bg-gray-100 text-gray-800'
+                    color: statusColors[task?.status?.toLowerCase()] || 'bg-gray-100 text-gray-800'
                   },
                   { 
                     label: 'Priority', 
-                    value: task.priority,
+                    value: task?.priority,
                     badge: true,
-                    color: priorityColors[task.priority.toLowerCase()] || 'bg-gray-100 text-gray-800'
+                    color: priorityColors[task?.priority?.toLowerCase()] || 'bg-gray-100 text-gray-800'
                   },
-                  { label: 'Due Date', value: formatDate(task.dueDate) },
-                  { label: 'Assigned To', value: task.assignTo },
-                  { label: 'Created At', value: formatDate(task.createdAt) },
-                  { label: 'Updated At', value: formatDate(task.updatedAt) },
-                  { label: 'User ID', value: task.userId },
+                  { label: 'Due Date', value: formatDate(task?.dueDate) },
+                  { label: 'Assigned To', value: task?.assignTo },
+                  { label: 'Created At', value: formatDate(task?.createdAt) },
+                  { label: 'Updated At', value: formatDate(task?.updatedAt) },
+                  { label: 'User ID', value: task?.userId },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -132,12 +140,12 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
                     className={`${item.colSpan || ''} ${item.className || ''}`}
                   >
                     <span className="font-medium text-gray-500">{item.label}:</span>
-                    {item.badge ? (
+                    {item?.badge ? (
                       <span className={`${item.color} text-xs font-medium me-2 px-2.5 py-0.5 rounded-full inline-flex items-center mt-1`}>
-                        {String(item.value).charAt(0).toUpperCase() + String(item.value).slice(1)}
+                        {String(item?.value)?.charAt(0)?.toUpperCase() + String(item?.value).slice(1)}
                       </span>
                     ) : (
-                      <p className="font-semibold text-gray-800">{item.value}</p>
+                      <p className="font-semibold text-gray-800">{item?.value}</p>
                     )}
                   </motion.div>
                 ))}
@@ -152,7 +160,7 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={handleDelete}
+                  onClick={()=>handleDelete(task._id)}
                   className="flex items-center cursor-pointer gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-sm"
                   style={{
                     background: 'linear-gradient(to right, #fff, #fff)',
@@ -186,6 +194,7 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
           </div>
         </div>
       </Dialog>
+      {<UpdateTask updateModal={updateModal} task={task} setIsUpdateModal={setIsUpdateModal} />}
     </Transition>
   );
 }

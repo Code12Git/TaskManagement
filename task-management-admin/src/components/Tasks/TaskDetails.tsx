@@ -1,4 +1,4 @@
-'use client'
+'use client' // Added at the very top
 
 import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks'
 import { getAllTasks } from '@/redux/actions/taskAction'
@@ -7,17 +7,22 @@ import TaskModal from '@/ui/modal/task/TaskModal'
 import { format } from 'date-fns'
 import { motion, Variants } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
+import SearchBar from './SearchBar'
+import Filtered from './Filtered'
 
 const TaskDetails = () => {
-  // Mock data for UI demonstration only
-    const dispatch = useAppDispatch()
-    useEffect(()=>{
-        dispatch(getAllTasks())
-    },[dispatch])
-    const [open,setIsOpen] = useState(false)
-    const [selectedTask,setSelectedTask] = useState<Task>()
-  const {tasks} = useAppSelector(state => state.task)
-  console.log(tasks)
+  const dispatch = useAppDispatch()
+  
+  useEffect(() => {
+    dispatch(getAllTasks())
+  }, [dispatch])
+  
+  const [open, setIsOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<Task>()
+  const { tasks, filteredTasks } = useAppSelector(state => state.task)
+  
+  // Use filteredTasks if they exist, otherwise use all tasks
+  const displayedTasks = filteredTasks && filteredTasks.length > 0 ? filteredTasks : tasks
 
   // Animation variants
   const containerVariants: Variants = {
@@ -56,8 +61,6 @@ const TaskDetails = () => {
     }
   }
 
-  console.log(open)
-
   const statusColors: Record<string, string> = {
     'completed': 'bg-green-100 text-green-800',
     'in-progress': 'bg-blue-100 text-blue-800',
@@ -88,6 +91,7 @@ const TaskDetails = () => {
           >
             Task Dashboard
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -97,7 +101,8 @@ const TaskDetails = () => {
             View and manage your tasks
           </motion.p>
         </motion.div>
-
+        <SearchBar />
+        <Filtered />
         {/* Tasks grid */}
         <motion.div
           variants={containerVariants}
@@ -105,15 +110,15 @@ const TaskDetails = () => {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {tasks.map((task) => (
+          {displayedTasks.map((task) => (
             <motion.div
               key={task._id}
               variants={taskVariants}
               onClick={() => {
-                setIsOpen(true);
-                setSelectedTask(task);
+                setIsOpen(true)
+                setSelectedTask(task)
               }}
-                            whileHover={{ y: -5, scale: 1.02 }}
+              whileHover={{ y: -5, scale: 1.02 }}
               className="bg-white cursor-pointer rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow"
             >
               <div className="p-6">
@@ -130,7 +135,7 @@ const TaskDetails = () => {
                     {task.status}
                   </span>
                   <span className="text-sm text-gray-500">
-                  Due: {task.dueDate ? format(new Date(task.dueDate), 'MMM dd, yyyy') : 'No due date'}
+                    Due: {task.dueDate ? format(new Date(task.dueDate), 'MMM dd, yyyy') : 'No due date'}
                   </span>
                 </div>
               </div>
@@ -159,8 +164,10 @@ const TaskDetails = () => {
           transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.5 }}
           className="fixed -z-10 bottom-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-r from-pink-400 to-red-400 blur-3xl"
         />
-        {<TaskModal open={open} setIsOpen={setIsOpen} task ={selectedTask} />}
-      </div>
+        
+        {selectedTask && (
+  <TaskModal open={open} setIsOpen={setIsOpen} task={selectedTask} />
+)}      </div>
     </div>
   )
 }
