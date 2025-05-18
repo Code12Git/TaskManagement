@@ -20,6 +20,7 @@ export interface ApiError {
 
 export interface taskState  {
   tasks: Task[],
+  filteredTasks:Task[],
   isLoading:boolean,
   error:null
 }
@@ -27,12 +28,17 @@ export interface taskState  {
 
 export interface taskPayload {
   isLoading:boolean
+  searchTerm:string
+  id?:string;
+  priority:string;
+  status:string;
 }
 
   export interface userPayload {
     includes(_id: string | undefined): unknown;
     count?: null | [];
     _id?:string;
+   
     role?:string;
     forEach(arg0: (item: { count: number; month: string; }) => void): unknown;
     user?: User;
