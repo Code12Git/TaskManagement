@@ -195,7 +195,13 @@ const Login = () => {
                                     </span>
                                 )}
                             </motion.button>
+                             
                         </motion.div>
+                        <motion.a
+                                href="/forgot-password"
+                                className="font-medium text-indigo-600 hover:text-indigo-500 inline-flex items-center"
+                                whileHover={{ x: 2 }}
+                           >Forgot Password</motion.a>
                     </motion.form>
 
                     <motion.div variants={itemVariants} className="mt-6 text-center">
