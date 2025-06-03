@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
+import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 type ProvidersProps = {
@@ -14,6 +15,8 @@ type ProvidersProps = {
 export function Providers({ children }: ProvidersProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [persistor, setPersistor] = useState<any>(null);
+  const pathname = usePathname();
+  console.log(pathname)
 
   useEffect(() => {
     const _persistor = persistStore(store);

@@ -35,9 +35,7 @@ const verifyToken = async (req, res, next) => {
 const verifyTokenAndAdmin = (req, res, next) => {
   verifyToken(req, res, (err) => {
     if (err) return next(err);
-    console.log(req.user.role)
     if (req.user?.role === "admin") {
-      console.log(req.user.role)
       return next();
     } else {
       return next(new AppError("You are not allowed to perform this action", 403));

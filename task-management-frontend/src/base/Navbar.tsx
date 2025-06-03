@@ -34,7 +34,7 @@ const Navbar = () => {
           </div>
 
           <div className="hidden sm:flex sm:items-center space-x-6">
-            {['/', '/dashboard', '/addtask', '/task'].map((path, i) => (
+            {['/', '/dashboard', '/addtask', '/task','/user'].map((path, i) => (
               <Link
                 key={i}
                 href={path}

@@ -20,6 +20,9 @@ const userSchema = new Schema({
         enum:['manager','user','admin'],
         default:'user'
     },
+    avatarUrl:{
+        type:String,
+    },
     password:{
         type:String,
         trim:true
