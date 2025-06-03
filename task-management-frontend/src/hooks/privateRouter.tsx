@@ -3,7 +3,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import LoadingSpinner from '@/app/LoadingSpinner';
 
-const publicRoutes = ['/login', '/register', '/', '/forgot-password'];
+const publicRoutes = ['/login', '/register', '/', '/forgot-password' ];
+
 
 export default function PrivateRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,7 +13,9 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
   const user = localStorage.getItem('user')
   const token = localStorage.getItem('token')
   useEffect(() => {
-     if (publicRoutes.includes(pathname)) {
+    const isPublicRoute =
+    publicRoutes.includes(pathname) || pathname.startsWith('/reset-password/');
+     if (isPublicRoute) {
       setIsCheckingAuth(false);
       return;
     }

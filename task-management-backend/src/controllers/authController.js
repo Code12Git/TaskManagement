@@ -28,5 +28,23 @@ const adminLogin = async(request,response) => {
 }
 
 
+const forgotPassword = async(request,response) => {
+    try{
+        const result = await authManager.forgotPassword(request.body)
+        return responseManager.sendSuccessResponse(response,result,'Link Send Successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Password Forgot Error')
+    }
+}
 
-module.exports = { register,login,adminLogin }
+
+const resetPassword = async(request,response) => {
+    try{
+        const result = await authManager.resetPassword(request.body)
+        return responseManager.sendSuccessResponse(response,result,'Password Reset Successfully')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Password Reset Error')
+    }
+}
+
+module.exports = { register,login,adminLogin,forgotPassword,resetPassword }

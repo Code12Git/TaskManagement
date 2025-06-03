@@ -11,7 +11,7 @@ export const usePath = () => {
 export const PathnameProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePath();
   const isHomepage = pathname === '/';
-  const isLogin = pathname === '/login' || pathname === '/register';  
+  const isLogin = pathname === '/login' || pathname === '/register' ||  pathname === '/forgot-password' || pathname.startsWith('/reset-password/');;  
   
   return (
     <>
