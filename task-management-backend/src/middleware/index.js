@@ -1,2 +1,3 @@
 const verifyData = require('./verifyData')
-module.exports = { verifyData }
+const upload = require('./uploadImage')
+module.exports = { verifyData ,upload }

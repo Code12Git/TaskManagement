@@ -12,3 +12,11 @@ export const privateRequest = axios.create({
         Authorization: `Bearer ${token}`
     }
 })
+
+export const formRequest = axios.create({
+	baseURL: BASE_URL,
+	headers: {
+		"Content-Type": "multipart/form-data",
+		Authorization: `Bearer ${token}`,
+	},
+});

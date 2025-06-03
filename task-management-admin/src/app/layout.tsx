@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/hooks/provider";
 import { Toaster } from "react-hot-toast";
-import Sidebar from "@/base/Sidebar";
+import LayoutWrapper from "@/hooks/layoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,10 +32,9 @@ export default function RootLayout({
       >
         <Toaster />
        <Providers>
-        <Sidebar />
-        <div style={{marginLeft:'20%',width:'80%'}}>
-          {children}
-          </div>
+       <LayoutWrapper>
+        {children}
+       </LayoutWrapper>
      </Providers>
       </body>
     </html>

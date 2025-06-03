@@ -69,4 +69,25 @@ const changeRole = async(request,response) => {
 }
 
 
-module.exports = {getUser,assignUser,countUsers,deleteUser,changeRole}
+const updateUser = async(request,response) => {
+    try{
+        const result = await userManager.updateUser(request.body,request.params)
+        return responseManager.sendSuccessResponse(response,result,'User Updated Successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Error Updating User')
+    }
+}
+
+
+const uploadAvatar = async(request,response) => {
+    console.log('Entered')
+    try{
+        const result = await userManager.uploadAvatar(request.files,request.user.id)
+        return responseManager.sendSuccessResponse(response,result,'Avatar Uploaded Successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Error Updating Avatar')
+    }
+}
+
+
+module.exports = {getUser,assignUser,countUsers,deleteUser,changeRole,updateUser,uploadAvatar}

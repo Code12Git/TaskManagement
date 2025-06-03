@@ -6,9 +6,12 @@ import {
   FETCH_USERS_FAILURE,
   ASSIGN_USERS_REQUEST,
   ASSIGN_USERS_SUCCESS,
-  ASSIGN_USERS_FAILURE
+  ASSIGN_USERS_FAILURE,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS
 } from '../actionTypes/actionTypes'
-import { AuthResponse } from '@/types';
+import { AuthResponse, User } from '@/types';
 import { ApiError } from '@/types';
 import toast from 'react-hot-toast'
 
@@ -60,3 +63,35 @@ export const assignUser = (userId:string,taskId:string) => async (dispatch: Disp
   }
 };
 
+export const updatedUser = (userId: string, userData: Partial<User>) => async (dispatch: Dispatch) => {
+  dispatch({ type: UPDATE_USER_REQUEST });
+
+  try {
+    await privateRequest.put<AuthResponse>(`/user/${userId}`, userData);
+
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: {
+        userId,
+        userData,
+      },
+    });
+
+    const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const updatedLocalUser = { ...existingUser, ...userData };
+    localStorage.setItem("user", JSON.stringify(updatedLocalUser));
+
+    toast.success("User Updated Successfully");
+  } catch (err) {
+    const error = err as ApiError;
+    dispatch({
+      type: UPDATE_USER_FAILURE,
+      payload:
+        error.response?.data?.code?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        "Error Updating User",
+    });
+    toast.error("User cannot be updated Successfully!");
+  }
+};
