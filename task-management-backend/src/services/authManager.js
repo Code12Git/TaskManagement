@@ -3,7 +3,7 @@ const { AppError, fromEnv } = require("../utils");
 const { CONFLICT, UNAUTHORIZED, NOT_FOUND } = require("../utils/errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const sendResetPasswordLink = require("./emailManager");
+const {sendResetPasswordLink} = require("./emailManager");
 
 const register = async (body) => {
   const { name, email, username, password } = body;

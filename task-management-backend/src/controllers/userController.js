@@ -18,7 +18,7 @@ const assignUser = async (request, response) => {
         const io = request.app.get('io');   
         const notificationService = new NotificationService(io);
         
-        const result = await userManager.assignUser(request.body);
+        const result = await userManager.assignUser(request.body,request.user);
         
         // Only send notification if assignment was successful
         if (result && result.assignTo) {

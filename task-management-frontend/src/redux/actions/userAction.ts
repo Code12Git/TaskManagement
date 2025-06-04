@@ -42,7 +42,6 @@ export const fetchUser = () => async (dispatch: Dispatch) => {
 
 export const assignUser = (userId:string,taskId:string) => async (dispatch: Dispatch) => {
   dispatch({ type: ASSIGN_USERS_REQUEST });
-   console.log("UserId:",userId,"TaskId",taskId) 
   try {
      const res = await privateRequest.post<AuthResponse>('/user/assign',{userId,taskId});
     dispatch({ 
