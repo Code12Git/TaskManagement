@@ -2,6 +2,7 @@ const { userModel, taskModel } = require("../models");
 const { AppError } = require("../utils");
 const uploadImages = require("../utils/cloudinary");
 const { NOT_FOUND } = require("../utils/errors");
+const {  sendTaskDetailsToAssignees } = require("./emailManager");
 
 const getUser = async () => {
   try {
@@ -34,14 +35,19 @@ const deleteUser = async (params) => {
   }
 };
 
-const assignUser = async (body, io) => {
+const assignUser = async (body,user) => {
   const { taskId, userId } = body;
+  const {email} = user
   try {
     const task = await taskModel.findById(taskId);
     if (!task) throw new AppError({ ...NOT_FOUND, message: "Task not found" });
-    const user = await userModel.findById(userId);
-    if (!user) throw new AppError({ ...NOT_FOUND, message: "User not found" });
+    const userAssign = await userModel.findById(userId);
+    if (!userAssign) throw new AppError({ ...NOT_FOUND, message: "User not found" });
+    console.log(userAssign)
+    console.log(task)
     task.assignTo = userId;
+    await sendTaskDetailsToAssignees(task,userAssign.email,email)
+    
     await task.save();
     return { ...task, name: user.name, email: user.email };
   } catch (err) {
