@@ -1,8 +1,11 @@
-const {responseManager, taskManager} = require('../services')
+const {responseManager, taskManager} = require('../services');
+const NotificationService = require('../services/notificationManager');
 
 const create = async(request,response) => {
     try{
+
         const result = await taskManager.create(request.body,request.user)
+        
         return responseManager.sendSuccessResponse(response,result,'Task Created Successfully!')
     }catch(err){
         return responseManager.sendErrorResponse(response,err,'Cannot Create Task')
@@ -12,7 +15,21 @@ const create = async(request,response) => {
 
 const update = async(request,response) => {
     try{
+        const io = request.app.get('io');   
+        const notificationService = new NotificationService(io);
         const result = await taskManager.update(request.body,request.params)
+        console.log("Result:",result)
+        if (result && result.assignTo) {
+            await notificationService.editTaskDetails(
+                result.assignTo,  
+                {
+                    _id: result._id || result.taskId,
+                    title: result.title,
+                    dueDate: result.dueDate,
+                    priority: result.priority
+                }
+            );
+        }
         return responseManager.sendSuccessResponse(response,result,'Task Updated Successfully!')
     }catch(err){
         return responseManager.sendErrorResponse(response,err,'Cannot Update Task')
