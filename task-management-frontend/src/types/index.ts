@@ -21,7 +21,7 @@ export interface registerFormData {
 export interface AuthResponse {
   data:{
     user: User;
-    token: string
+    token?: string
   }
   statusCode:number;
 }
@@ -58,7 +58,7 @@ export interface UserCredentials {
 
 export interface AuthResponse {
   user:User
-  token: string;
+  token?: string;
 }
 
 export interface ApiError {
@@ -97,7 +97,7 @@ export interface Task {
   description: string;
   dueDate: Date;
   priority?: 'low' | 'medium' | 'high';
-  status?: 'not-started' | 'in-progress' | 'completed';
+  status: 'not-started' | 'in-progress' | 'completed';
   assignedTo?:string;
   userId?:string
   assignTo?:string

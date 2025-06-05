@@ -64,7 +64,7 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className={`bg-white bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex items-center justify-between shadow-lg ${
+      className={`bg-white bg-opacity-20 w-5xl backdrop-blur-md rounded-xl p-4 flex items-center justify-between shadow-lg ${
         task.status === "completed" ? "opacity-80" : ""
       }`}
     >

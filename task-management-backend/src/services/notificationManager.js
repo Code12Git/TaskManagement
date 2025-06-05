@@ -25,6 +25,22 @@ class NotificationService {
           throw error;
         }
       }
+
+    async editTaskDetails(userId,task){
+      try{
+        if (!userId) throw new Error('User ID is required for notification');
+        this.io.to(String(userId)).emit('taskAssigned', {
+          taskId: task._id,
+          title: task.title,
+          message: `Task Assigned to you  has been edited by the user`,
+          dueDate: task.dueDate,
+          priority: task.priority
+        });
+      }catch(error){
+        logger.error('Notification failed:', error);
+        throw error;
+      }
+    }  
     }
   
   module.exports = NotificationService;

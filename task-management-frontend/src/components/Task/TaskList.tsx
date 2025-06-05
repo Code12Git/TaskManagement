@@ -47,6 +47,7 @@ const TaskList = ({ tasks }: TaskListProps) => {
       socket.off('taskAssigned', handleTaskAssigned);
     };
   }, [userData?._id]);
+  
   return (
     <motion.div layout className="space-y-4">
       {tasks.length === 0 ? (

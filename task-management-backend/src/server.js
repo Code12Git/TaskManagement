@@ -11,10 +11,18 @@ const SocketService = require('./services/socketService');
 const app = express();
 const server = createServer(app);
 
-const io = new socketIo.Server(server);
+// Configure Socket.IO with CORS
+const io = new socketIo.Server(server, {
+  cors: {
+    origin: ["http://localhost:3000","http://localhost:3002"],  
+    methods: ["GET", "POST","PUT"],
+    credentials: true
+  }
+});
+
 new SocketService(io); 
 
-const PORT = fromEnv('PORT') || 3002;
+const PORT = fromEnv('PORT') || 3001;
 
 connectDB().catch(err => {
   logger.error('Database connection failed', err);
@@ -22,11 +30,13 @@ connectDB().catch(err => {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000","http://localhost:3002"], 
+  credentials: true
+}));
 app.use('/api', routes); 
 
-
- app.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({
     status: 'UP',
     timestamp: new Date().toISOString(),
@@ -35,11 +45,10 @@ app.use('/api', routes);
 });
 
 app.set('io', io);
+
 // Start server
 server.listen(PORT, () => {
   logger.info(`🚀 Server running at PORT: ${PORT}`);
 });
-
-
 
 module.exports = { server, io };

@@ -1,23 +1,82 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useAppSelector } from '@/hooks/hooks';
 import { useRouter } from 'next/navigation';
+import { useVoice } from '@/hooks/useVoice';
 export default function Homepage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('features');
   const { userData, token } = useAppSelector(state=>state.auth)
+  const [showVoiceControls, setShowVoiceControls] = useState(false);
+  const { speak, isSpeaking, pause, resume, stop } = useVoice();
+  
+    useEffect(() => {
+      const hasVisited = localStorage.getItem('hasVisited');
+      
+      if (!hasVisited) {
+        speak('Welcome to the task management app');
+        localStorage.setItem('hasVisited', 'true');
+      }
+    }, [speak]); 
+
   const router = useRouter()
+
+  const toggleVoiceControls = () => {
+    setShowVoiceControls(!showVoiceControls);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('persist:root')
     localStorage.removeItem('user')
     localStorage.removeItem('token')
+    localStorage.removeItem('hasVisited')
     router.push('/login')
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="fixed bottom-4 right-4 z-50">
+        <button
+          onClick={toggleVoiceControls}
+          className="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition"
+        >
+          {isSpeaking ? '🔊' : '🔈'}
+        </button>
+
+        {showVoiceControls && (
+          <div className="absolute bottom-16 right-0 bg-white rounded-lg shadow-lg p-4 w-48">
+            <button
+              onClick={() => speak('Welcome to the task management app')}
+              className="w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+            >
+              Play Welcome
+            </button>
+            {isSpeaking ? (
+              <button
+                onClick={pause}
+                className="w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+              >
+                Pause
+              </button>
+            ) : (
+              <button
+                onClick={resume}
+                className="w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+              >
+                Resume
+              </button>
+            )}
+            <button
+              onClick={stop}
+              className="w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+            >
+              Stop
+            </button>
+          </div>
+        )}
+      </div>
       <Head>
         <title>TaskFlow - Team Task Management System</title>
         <meta name="description" content="Efficient task management for teams" />

@@ -19,8 +19,8 @@ export const fetchUser = () => async (dispatch: Dispatch) => {
   dispatch({ type: FETCH_USERS_REQUEST });
   
   try {
-    const response = await privateRequest.get<AuthResponse>('/user');
-    console.log(response)
+    const response = await privateRequest.get('/user');
+    console.log(response.data)
     dispatch({ 
       type: FETCH_USERS_SUCCESS, 
       payload:response.data.data
