@@ -51,8 +51,7 @@ const Tasks = () => {
           </p>
         </div>
         <SearchBar />
-        <TaskBoard tasks={taskData}/>
-        {/* <TaskList tasks={taskData} /> */}
+        <TaskBoard initialTasks={taskData}/>
 
         {taskData.length > 0 && <TaskSummary tasks={taskData} />}
       </motion.div>

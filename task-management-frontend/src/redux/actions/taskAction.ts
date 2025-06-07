@@ -1,5 +1,5 @@
 import {  searchTerm, Task } from "@/types"
-import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes"
+import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS, UPDATE_TASKS_FAILURE, UPDATE_TASKS_REQUEST, UPDATE_TASKS_SUCCESS } from "../actionTypes/actionTypes"
 import { privateRequest} from "@/helpers/axios"
 import { Dispatch } from "redux";
 
@@ -52,6 +52,21 @@ export const get = () =>async (dispatch:Dispatch) => {
         const error = err as {response : {data: {code:{message:string}}}}
         dispatch({type:GET_TASK_FAILURE,payload:error.response.data.code.message || "Something went wrong"})
     }
+}
+
+
+export const updateAll = (data:Task[]) => async(dispatch:Dispatch) => {
+  console.log(data)
+  dispatch({type:UPDATE_TASKS_REQUEST})
+  try{
+    const updateTask = await privateRequest.put('/tasks/allTasks',{updatedTasks:data})
+    console.log(updateTask)
+    dispatch({type:UPDATE_TASKS_SUCCESS,payload:data})
+
+  }catch(err){
+      const error = err as {response : {data: {code:{message:string}}}}
+      dispatch({type:UPDATE_TASKS_FAILURE,payload:error.response.data.code.message || "Something went wrong"})
+  }
 }
 
 // taskAction.ts

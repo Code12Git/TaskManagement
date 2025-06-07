@@ -1,4 +1,4 @@
-import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes";
+import { ADD_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, DELETE_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASK_FAILURE, GET_TASK_REQUEST, GET_TASK_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS, UPDATE_TASKS_FAILURE, UPDATE_TASKS_REQUEST, UPDATE_TASKS_SUCCESS } from "../actionTypes/actionTypes";
 import {taskPayload, type taskState } from "@/types";
 const taskState:taskState = {
     taskData: [],
@@ -98,6 +98,30 @@ const taskReducer = (state = taskState, { type, payload }: { type: string; paylo
                 isLoading: false,
                 error: payload
             };
+
+
+            // Update all tasks
+
+            case UPDATE_TASKS_REQUEST:
+                return {
+                    ...state,
+                    isLoading: true,
+                    error: null
+                };
+            case UPDATE_TASKS_SUCCESS:
+                console.log(payload)
+                return {
+                    ...state,
+                    isLoading: false,
+                    taskData: payload,
+                    error: null
+                };
+            case UPDATE_TASKS_FAILURE:
+                return {
+                    ...state,
+                    isLoading: false,
+                    error: payload
+                };  
 
         // DELETE
         case DELETE_TASK_REQUEST:
