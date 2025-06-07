@@ -42,8 +42,10 @@ const EditUser: React.FC = () => {
 
   useEffect(() => {
     if (auth.user) {
+      console.log(auth.user)
       try {
-        const parsedUser = JSON.parse(auth.user) as UserData;
+        const parsedUser =  auth?.user as UserData;
+        console.log(parsedUser)
         setFormData(parsedUser);
         if (parsedUser.avatarUrl) {
           setAvatarUrl(parsedUser.avatarUrl);
@@ -52,7 +54,7 @@ const EditUser: React.FC = () => {
         console.error("Error parsing user data:", error);
       }
     }
-  }, [auth.user]);
+  }, []);
 
   const getFieldIcon = (field: string) => {
     switch (field) {
@@ -117,7 +119,7 @@ const EditUser: React.FC = () => {
   };
 
   const uploadAvatar = async () => {
-    if (!file || !formData._id) return;
+    if (!file || !formData._id) return null;
 
     try {
       setIsUploading(true);
@@ -125,21 +127,10 @@ const EditUser: React.FC = () => {
       formDataObj.append('avatarUrl', file);
 
       const response = await formRequest.post('/user/upload-avatar', formDataObj, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      
-      const newAvatarUrl = response.data.url;
-      setAvatarUrl(newAvatarUrl);
-      
-      if (auth.user) {
-        const user = JSON.parse(auth.user);
-        const updatedUser = { ...user, avatarUrl: newAvatarUrl };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-      }
-      
-      toast.success('Avatar updated successfully');
+      console.log(response.data.data.avatarUrl)
+      const newAvatarUrl = response.data.data.avatarUrl;
       return newAvatarUrl;
     } catch (error) {
       console.error('Error uploading avatar:', error);
@@ -149,6 +140,7 @@ const EditUser: React.FC = () => {
       setIsUploading(false);
     }
   };
+
 
   const sendUpdateData = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();

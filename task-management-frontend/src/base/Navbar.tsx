@@ -14,6 +14,7 @@ const Navbar = () => {
     localStorage.removeItem('persist:root');
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('hasVisited')
     router.push('/login');
   };
 
