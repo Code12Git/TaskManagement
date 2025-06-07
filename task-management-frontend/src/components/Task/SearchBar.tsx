@@ -125,17 +125,7 @@ const SearchBar = () => {
                 </div>
             </div>
 
-            {/* Results Section */}
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="pt-4"
-            >
-                <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
-                    Task results will appear here
-                </div>
-            </motion.div>
+           
         </motion.div>
     );
 };

@@ -1,5 +1,5 @@
 "use client";
-import { DragDropContext, OnDragEndResponder } from "@hello-pangea/dnd";
+import { DragDropContext, Draggable } from "@hello-pangea/dnd";
 import { Droppable } from "@hello-pangea/dnd";
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -9,19 +9,20 @@ import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
 import { fetchUser } from '@/redux/actions/userAction';
 import toast from 'react-hot-toast';
 import { socket } from '@/helpers/socket';
+import { updateAll } from "@/redux/actions/taskAction";
 
-const TaskBoard = ({ tasks }: { tasks: Task[] }) => {
+const TaskBoard = ({ initialTasks }: { initialTasks: Task[] }) => {
   const dispatch = useAppDispatch();
   const { filteredData } = useAppSelector((state) => state.tasks);
   const { userData } = useAppSelector((state) => state.auth);
   const [users, setUsers] = useState<User[]>([]);
-  const [taskItems, setTaskItems] = useState<Task[]>(tasks);
+  const [task, setTasks] = useState<Task[]>(initialTasks);
 
   useEffect(() => {
-    setTaskItems(tasks);
-  }, [tasks]);
+    setTasks(initialTasks);
+  }, [initialTasks]);
 
-  const groupedTasks = tasks.reduce((acc: Record<string, Task[]>, task) => {
+  const groupedTasks = initialTasks.reduce((acc: Record<string, Task[]>, task) => {
     if (!acc[task.status]) acc[task.status] = [];
     acc[task.status].push(task);
     return acc;
@@ -61,55 +62,47 @@ const TaskBoard = ({ tasks }: { tasks: Task[] }) => {
     }
      return groupedTasks[status] || [];
   };
-
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async(result: DropResult) => {
     const { destination, source, draggableId } = result;
 
-    // If there's no destination or if the item was dropped back to its original position
-    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
+    if (!destination || 
+        (destination.droppableId === source.droppableId && 
+         destination.index === source.index)) {
       return;
     }
 
-    // Find the task that was dragged
-    const startColumn = source.droppableId;
-    const finishColumn = destination.droppableId;
+    const startStatus = source.droppableId;
+    const finishStatus = destination.droppableId;
+    const taskIndex = initialTasks.findIndex(task => task._id === draggableId);
+    
+    if (taskIndex === -1) return;
 
-    // If moving within the same column
-    if (startColumn === finishColumn) {
-      const newTasks = Array.from(groupedTasks[startColumn]);
-      const [removed] = newTasks.splice(source.index, 1);
-      newTasks.splice(destination.index, 0, removed);
+    const updatedTasks = [...initialTasks];
+    const [movedTask] = updatedTasks.splice(taskIndex, 1);
 
-      setTaskItems(prevTasks => 
-        prevTasks.map(task => 
-          task.status === startColumn ? 
-          { ...task, order: newTasks.findIndex(t => t._id === task._id) } : 
-          task
-        )
-      );
-      return;
+    // Update status if moving between columns
+    if (startStatus !== finishStatus) {
+      movedTask.status = finishStatus;
     }
 
-    // If moving to a different column
-    const startTasks = Array.from(groupedTasks[startColumn] || []);
-    const finishTasks = Array.from(groupedTasks[finishColumn] || []);
-    const [removed] = startTasks.splice(source.index, 1);
-
-    // Update the status of the moved task
-    const updatedTask = { ...removed, status: finishColumn };
-    finishTasks.splice(destination.index, 0, updatedTask);
-
-    setTaskItems(prevTasks => 
-      prevTasks.map(task => {
-        if (task._id === draggableId) {
-          return { ...task, status: finishColumn };
-        }
-        return task;
-      })
+    // Find the correct position to insert
+    const finishTasks = updatedTasks.filter(task => task.status === finishStatus);
+    const newIndex = destination.index > finishTasks.length ? finishTasks.length : destination.index;
+    
+    // Insert at new position
+    const insertPosition = updatedTasks.findIndex(task => 
+      task.status === finishStatus && 
+      updatedTasks.filter(t => t.status === finishStatus).indexOf(task) >= newIndex
     );
+    
+    updatedTasks.splice(insertPosition >= 0 ? insertPosition : updatedTasks.length, 0, movedTask);
+    setTasks(updatedTasks);
 
-    // Here you would typically also make an API call to update the task status in your backend
+    console.log('hey')
+    await dispatch(updateAll(updatedTasks))
+
   };
+  console.log(task)
 
   return (
     <div className="min-h-screen w-screen mb-12 rounded bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
@@ -119,37 +112,38 @@ const TaskBoard = ({ tasks }: { tasks: Task[] }) => {
         transition={{ delay: 0.2 }}
         className="max-w-8xl mx-auto"
       >
-        <DragDropContext onDragEnd={onDragEnd} >
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-            Task Dashboard
-          </h1>
-          <div className="flex gap-2">
-            {['Not Started', 'In Progress', 'Completed'].map((status) => (
-              <div key={status} className="flex items-center gap-1">
-                <div className={`w-3 h-3 rounded-full ${
-                  status === 'Not Started' ? 'bg-red-500' :
-                  status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
-                }`} />
-                <span className="text-sm text-gray-600">{status}</span>
-              </div>
-            ))}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              Task Dashboard
+            </h1>
+            <div className="flex gap-2">
+              {['Not Started', 'In Progress', 'Completed'].map((status) => (
+                <div key={status} className="flex items-center gap-1">
+                  <div className={`w-3 h-3 rounded-full ${
+                    status === 'Not Started' ? 'bg-red-500' :
+                    status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`} />
+                  <span className="text-sm text-gray-600">{status}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             {[
               { status: 'not-started', title: 'Not Started', color: 'red' },
               { status: 'in-progress', title: 'In Progress', color: 'amber' },
               { status: 'completed', title: 'Completed', color: 'emerald' }
             ].map((column) => (
               <Droppable key={column.status} droppableId={column.status}>
-                {(provided) => (
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="h-full"
+                    className={`h-full rounded-lg transition-colors ${
+                      snapshot.isDraggingOver ? 'bg-gray-50' : 'bg-transparent'
+                    }`}
                   >
                     <Column 
                       title={column.title}
@@ -215,11 +209,22 @@ const Column = ({
             </span>
           </div>
         </div>
-        
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {tasks.length > 0 ? (
-            tasks.map((task) => (
-              <TaskItem key={task._id} task={task} users={users} />
+            tasks.map((task, index) => (
+              <Draggable key={task._id} draggableId={task._id} index={index}>
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                  className={`mb-3 ${snapshot.isDragging ? 'opacity-75 shadow-lg' : 'opacity-100'}`}
+                  style={provided.draggableProps.style}
+                >
+                  <TaskItem task={task} users={users} />
+                </div>
+              )}
+            </Draggable>
             ))
           ) : (
             <div className="text-center py-8 text-gray-400 text-sm">

@@ -36,6 +36,16 @@ const update = async(request,response) => {
     }
 }
 
+const updateTasks = async(request,response) => {
+    console.log(request.body)
+    try{
+        const result = await taskManager.updateAllTask(request.body)
+        return responseManager.sendSuccessResponse(response,result,'All Tasks Update Successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Cannot update tasks')
+    }
+}
+
 const deleteOne = async(request,response) => {
     try{
         const result = await taskManager.deleteOne(request.params)
@@ -75,4 +85,5 @@ const getAll = async(request,response) => {
 
 
 
-module.exports = {create,update,deleteOne,get,getAll,getAllTaskByUser}
+
+module.exports = {create,update,deleteOne,get,getAll,getAllTaskByUser,updateTasks}
