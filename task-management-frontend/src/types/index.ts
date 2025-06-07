@@ -21,7 +21,7 @@ export interface registerFormData {
 export interface AuthResponse {
   data:{
     user: User;
-    token?: string
+    token: string
   }
   statusCode:number;
 }
@@ -75,13 +75,17 @@ export interface ApiError {
 
 export interface userPayload {
   user?: User;
+  userId?:string;
   token?: string;
   error?: string;
   id?: string;
 }
 
 export interface userDataPayload{
-  user?:User
+  user?:User;
+  userId?:string;
+  userData?:User;
+
 }
 
 export interface  searchTerm {

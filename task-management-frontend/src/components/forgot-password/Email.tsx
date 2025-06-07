@@ -9,10 +9,10 @@ const Email = () => {
 
     console.log(email)
 
-    const sendforgotLink = async(e:React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        await publicRequest.post('/auth/forgot-password',{email:email})
-        toast.success('Reset Password Link Send Successfully!')
+    const sendforgotLink = async(e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        await publicRequest.post('/auth/forgot-password', { email: email });
+        toast.success('Reset Password Link Send Successfully!');
     }
 
   return (

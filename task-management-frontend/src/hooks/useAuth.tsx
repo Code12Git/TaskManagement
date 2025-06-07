@@ -1,10 +1,9 @@
-
 export const useAuth = () => {
-    const user = localStorage.getItem('user')
-    const token = localStorage.getItem('token')
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+  const token = localStorage.getItem("token");
 
-    return {user,token}
-  
-}
+  return { user, token };
+};
 
-export default useAuth
+export default useAuth;

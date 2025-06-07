@@ -1,5 +1,5 @@
 "use client";
-import { DragDropContext, Draggable } from "@hello-pangea/dnd";
+import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Droppable } from "@hello-pangea/dnd";
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -82,8 +82,9 @@ const TaskBoard = ({ initialTasks }: { initialTasks: Task[] }) => {
 
     // Update status if moving between columns
     if (startStatus !== finishStatus) {
-      movedTask.status = finishStatus;
+      movedTask.status = finishStatus as 'not-started' | 'in-progress' | 'completed';
     }
+    
 
     // Find the correct position to insert
     const finishTasks = updatedTasks.filter(task => task.status === finishStatus);
@@ -212,7 +213,7 @@ const Column = ({
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {tasks.length > 0 ? (
             tasks.map((task, index) => (
-              <Draggable key={task._id} draggableId={task._id} index={index}>
+              <Draggable key={task._id} draggableId={task._id!} index={index}>
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}

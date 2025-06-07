@@ -48,7 +48,6 @@ export const fetchAllUsers = () => async(dispatch:Dispatch) => {
   dispatch({type:GET_USERS_REQUEST})
   try{
     const result = await privateRequest.get<AuthResponse>('/user');
-    console.log(result.data.data)
     dispatch({
       type: GET_USERS_SUCCESS,
       payload:result.data.data
@@ -63,7 +62,6 @@ export const fetchAllUsers = () => async(dispatch:Dispatch) => {
               error.message || 
               'Fetch User Failed'
     });
-    toast.error("Error Fetching User Successfully")
   }
 };
 

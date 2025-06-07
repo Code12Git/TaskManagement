@@ -9,8 +9,7 @@ class NotificationService {
     async sendTaskAssignment(userId, task) {
         try {
           if (!userId) throw new Error('User ID is required for notification');
-          
-          // STRICTLY emit to only the target user's room
+          console.log(userId,task)
           this.io.to(String(userId)).emit('taskAssigned', {
             taskId: task._id,
             title: task.title,
@@ -18,7 +17,8 @@ class NotificationService {
             dueDate: task.dueDate,
             priority: task.priority
           });
-          
+          console.log("Emitting to userId:", userId); 
+
           logger.info(`Task assignment notification sent ONLY to user ${userId}`);
         } catch (error) {
           logger.error('Notification failed:', error);
@@ -29,7 +29,7 @@ class NotificationService {
     async editTaskDetails(userId,task){
       try{
         if (!userId) throw new Error('User ID is required for notification');
-        this.io.to(String(userId)).emit('taskAssigned', {
+        this.io.to(String(userId)).emit('editTask', {
           taskId: task._id,
           title: task.title,
           message: `Task Assigned to you  has been edited by the user`,

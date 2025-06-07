@@ -5,6 +5,7 @@ import { Providers } from "@/hooks/provider";
 import { Toaster } from "react-hot-toast";
 import PrivateRoute from "@/hooks/privateRouter";
 import { PathnameProvider } from "@/hooks/pathname";
+import SocketProvider from "@/helpers/SocketProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,16 +26,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster />
-        <Providers><PrivateRoute>
-          <PathnameProvider>
-          {children}</PathnameProvider></PrivateRoute></Providers>
+        <Providers>
+          <PrivateRoute>
+            <SocketProvider><PathnameProvider>{children}</PathnameProvider></SocketProvider>
+          
+          </PrivateRoute>
+        </Providers>
       </body>
     </html>
   );
