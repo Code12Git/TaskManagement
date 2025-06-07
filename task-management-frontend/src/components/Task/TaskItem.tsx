@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { motion } from "framer-motion";
 import {
   FiCheck,
@@ -12,7 +12,6 @@ import {
 import { useAppDispatch } from "@/hooks/hooks";
 import { deleteOne, update } from "@/redux/actions/taskAction";
 import { assignUser } from "@/redux/actions/userAction";
-import { socket } from "@/helpers/socket";
 import { Task, User } from "@/types";
 import UpdateTaskModal from "@/ui/modal/task/UpdateTaskModal";
 import useAuth from "@/hooks/useAuth";

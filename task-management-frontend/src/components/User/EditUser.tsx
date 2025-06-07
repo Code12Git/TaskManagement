@@ -165,7 +165,7 @@ const EditUser: React.FC = () => {
         newAvatarUrl = await uploadAvatar();
       }
 
-      const updateData = {
+      const updateData: Partial<UserData> = {
         ...isFieldEdit,
         ...(newAvatarUrl ? { avatarUrl: newAvatarUrl } : {}),
       };

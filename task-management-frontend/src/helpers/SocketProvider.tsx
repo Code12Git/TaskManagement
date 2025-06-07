@@ -13,12 +13,12 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       socket.emit("join", user._id); // Join the user's room
 
       // Handler for task assignment notifications
-      const handleTaskAssigned = (data: any) => {
+      const handleTaskAssigned = (data: {title:string,message:string}) => {
         customToast(data.title, data.message);
       };
 
       // Handler for task edit notifications
-      const handleTaskEdited = (data: any) => {
+      const handleTaskEdited = (data: {title:string,message:string}) => {
         customToast(data.title, data.message);
       };
 

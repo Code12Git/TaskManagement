@@ -21,7 +21,7 @@ export interface registerFormData {
 export interface AuthResponse {
   data:{
     user: User;
-    token?: string
+    token: string
   }
   statusCode:number;
 }
