@@ -36,7 +36,7 @@ const update = async (body, params) => {
       },
       { new: true, runValidators: true }
     );
-
+    console.log(updatedTask)
     if (!updatedTask)
       throw new AppError({ ...NOT_FOUND, message: "Task not found" });
     return updatedTask;
@@ -106,9 +106,9 @@ const getAllTaskByUser = async (user) => {
 
 const getAll = async () => {
   try {
-    const getAllTask = await taskModel.find();
-    if (!getAllTask)
-      throw new AppError({ ...NOT_FOUND, message: "No task is present" });
+    const getAllTask = await taskModel.find().populate('userId', '-password -__v');
+    console.log(getAllTask)
+    if (!getAllTask) throw new AppError({ ...NOT_FOUND, message: "No task is present" });
     return getAllTask;
   } catch (err) {
     throw err;

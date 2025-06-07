@@ -1,4 +1,4 @@
-import { userDataPayload } from "@/types";
+import { User, userDataPayload } from "@/types";
 import {
   FETCH_USERS_REQUEST,
   FETCH_USERS_SUCCESS,
@@ -47,7 +47,7 @@ const userReducer = (
         const { userId, userData } = payload;
         return {
           ...state,
-          users: state.users.map(user =>
+          users: state.users.map((user:User) =>
             user._id === userId ? userData : user
           )
         };

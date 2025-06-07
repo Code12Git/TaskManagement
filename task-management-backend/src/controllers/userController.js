@@ -19,8 +19,7 @@ const assignUser = async (request, response) => {
         const notificationService = new NotificationService(io);
         
         const result = await userManager.assignUser(request.body,request.user);
-        
-        // Only send notification if assignment was successful
+        console.log("Result:",result)
         if (result && result.assignTo) {
             await notificationService.sendTaskAssignment(
                 result.assignTo,  
@@ -33,7 +32,10 @@ const assignUser = async (request, response) => {
             );
         }
 
-        return responseManager.sendSuccessResponse(response, result);
+        console.log("Assigning user ID:", request.user._id);
+        console.log("Assignee user ID (should receive toast):", result.assignTo);
+
+        return responseManager.sendSuccessResponse(response, result,'User assigned sucessfully!');
     } catch (error) {
         return responseManager.sendErrorResponse(response, error);
     }

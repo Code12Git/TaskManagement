@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express');  
 const { fromEnv } = require('./utils');
 const { createServer } = require('node:http');
 const socketIo = require('socket.io');
@@ -11,7 +11,6 @@ const SocketService = require('./services/socketService');
 const app = express();
 const server = createServer(app);
 
-// Configure Socket.IO with CORS
 const io = new socketIo.Server(server, {
   cors: {
     origin: ["http://localhost:3000","http://localhost:3002"],  
@@ -46,7 +45,6 @@ app.get('/', (req, res) => {
 
 app.set('io', io);
 
-// Start server
 server.listen(PORT, () => {
   logger.info(`🚀 Server running at PORT: ${PORT}`);
 });

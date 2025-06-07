@@ -38,8 +38,6 @@ const deleteUser = async (params) => {
 const assignUser = async (body, user) => {
   const { taskId, userId } = body;
   const { email } = user;
-
-  // Validate input
   if (!taskId || !userId) {
     throw new AppError({ 
       ...BAD_REQUEST, 
@@ -48,11 +46,12 @@ const assignUser = async (body, user) => {
   }
 
   try {
-    // Find task and user in parallel for better performance
     const [task, userAssign] = await Promise.all([
       taskModel.findById(taskId),
       userModel.findById(userId)
     ]);
+
+
 
     if (!task) {
       throw new AppError({ ...NOT_FOUND, message: "Task not found" });
@@ -62,22 +61,16 @@ const assignUser = async (body, user) => {
       throw new AppError({ ...NOT_FOUND, message: "User not found" });
     }
 
-    // Check if the task is already assigned to this user
     if (task.assignTo && task.assignTo.toString() === userId) {
-      return task; // or you could throw an error if you prefer
+      return task;
     }
-
-    // Update and save the task
     task.assignTo = userId;
     await task.save();
-
-    // Send notification (fire-and-forget, don't await if not critical)
     sendTaskDetailsToAssignees(task, userAssign.email, email)
-      .catch(error => console.error("Failed to send task details:", error));
-
+    .catch(error => console.error("Failed to send task details:", error));
+    
     return task;
   } catch (err) {
-    // You might want to add more specific error handling here
     console.error("Error in assignUser:", err);
     throw err instanceof AppError ? err : new AppError({
       ...INTERNAL_SERVER_ERROR,
