@@ -11,6 +11,7 @@ export interface User {
   role?: string; 
   createdAt?: string;
   updatedAt?: string;
+  avatarUrl:string;
 }
 export interface registerFormData {
   name:string;
