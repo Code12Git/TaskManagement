@@ -1,6 +1,9 @@
 import { Dispatch } from 'redux';
 import { privateRequest} from '@/helpers/axios';
 import { 
+  ASSIGN_USERS_FAILURE,
+  ASSIGN_USERS_REQUEST,
+  ASSIGN_USERS_SUCCESS,
   DELETE_USERS_FAILURE,
   DELETE_USERS_REQUEST,
     DELETE_USERS_SUCCESS,
@@ -40,7 +43,6 @@ export const fetchUserCountByMonth = () => async (dispatch: Dispatch) => {
               error.message || 
               'Fetch Count failed'
     });
-    toast.error("Error Fetching Count Successfully")
   }
 };
 
@@ -109,3 +111,25 @@ export const updateUsers = (userId:string,role:string) => async(dispatch:Dispatc
     toast.error("Error Updating User Role Successfully")
   }
 }
+
+export const assignUser = (userId:string,taskId:string) => async (dispatch: Dispatch) => {
+  dispatch({ type: ASSIGN_USERS_REQUEST });
+  try {
+    await privateRequest.post<AuthResponse>('/user/assign',{userId,taskId});
+    console.log(userId,)
+    dispatch({ 
+      type: ASSIGN_USERS_SUCCESS, 
+    });
+    
+  } catch (err) {
+    const error = err as ApiError;
+    dispatch({
+      type: ASSIGN_USERS_FAILURE,
+      payload: error.response?.data?.code?.message || 
+              error.response?.data?.message || 
+              error.message || 
+              'Users Fetching failed'
+    });
+  }
+};
+

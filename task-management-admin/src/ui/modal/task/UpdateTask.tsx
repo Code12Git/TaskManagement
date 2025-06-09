@@ -1,23 +1,121 @@
 'use client';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PencilIcon, CircleX, ChevronDown } from 'lucide-react';
 import { Task } from '@/types';
+import { assignUser, fetchAllUsers } from '@/redux/actions/userAction'; // Assuming you have these actions
+import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
+import { update } from '@/redux/actions/taskAction';
+import { socket } from "@/helpers/socket";
+import toast from 'react-hot-toast';
 
-
-interface UpdateProps{
-    updateModal:boolean,
-    setIsUpdateModal: React.Dispatch<React.SetStateAction<boolean>>;
-    task:Task
+interface UpdateProps {
+  updateModal: boolean;
+  setIsUpdateModal: React.Dispatch<React.SetStateAction<boolean>>;
+  task: Task;
 }
 
-const UpdateTask = ({ updateModal, setIsUpdateModal,task }:UpdateProps) => {
+const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
+  const dispatch = useAppDispatch();
+  const { userData } = useAppSelector(state => state.user);
+   const {adminData} = useAppSelector(state => state.auth);
+  useEffect(()=>{
+    dispatch(fetchAllUsers())
+  },[dispatch])  
+  // State for all editable fields
+  const [formData, setFormData] = useState({
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    priority: task.priority,
+    dueDate: task.dueDate,
+    assignTo: task.assignTo?._id || ''
+  });
+
+  useEffect(() => {
+    if (!adminData?._id) return;
+    socket.emit("join", adminData._id);
+    const handleTaskAssigned = (data: { title: string }) => {
+      toast.success(`New task assigned to you: ${data.title}`);
+    };
+    socket.on("taskAssigned", handleTaskAssigned);
+    return () => {
+      socket.off("taskAssigned", handleTaskAssigned);
+    };
+  }, [adminData?._id]);
+
+  // Update form data when task prop changes
+  useEffect(() => {
+    setFormData({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      dueDate: task.dueDate,
+      assignTo: task.assignTo?._id || ''
+    });
+  }, [task]);
+
   const closeModal = () => {
     setIsUpdateModal(false);
   };
-  console.log(task)
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAssignUser = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const userId = e.target.value;
+    const taskId = task._id;
+    
+    setFormData(prev => ({ ...prev, assignTo: userId }));
+  
+    try {
+      if (taskId) {
+        await dispatch(assignUser(userId, taskId));
+      }
+    } catch (error) {
+      console.error("Assignment failed:", error);
+      setFormData(prev => ({ ...prev, assignTo: task.assignTo?._id || '' }));
+    }
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      if (task._id) {
+        // Prepare the data to match your API requirements
+        const updateData:Task = {
+          title: formData.title,
+          description: formData.description,
+          status: formData.status,
+          priority: formData.priority,
+          dueDate: formData.dueDate,
+          assignTo: formData.assignTo || undefined // Send undefined if empty to unassign
+        };
+
+        // Dispatch the update action with the correct parameters
+        await dispatch(update(updateData, task._id));
+        closeModal();
+      }
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      // Error is already handled by your Redux action
+    }
+  };
+
+  // Format date for datetime-local input
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16);
+  };
 
   return (
     <Transition appear show={updateModal} as={Fragment}>
@@ -61,145 +159,165 @@ const UpdateTask = ({ updateModal, setIsUpdateModal,task }:UpdateProps) => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={closeModal}
+                  className="focus:outline-none"
                 >
                   <CircleX className="h-6 w-6 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" />
                 </motion.button>
               </div>
 
-              <div className="space-y-4">
-                {/* Title Field */}
-                <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name='title'
-                    value={task.title}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    placeholder="Task title"
-                  />
-                </div>
-
-                {/* Description Field */}
-                <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    rows={4}
-                    name='description'
-                    value={task.description}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    placeholder="Task description"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Status Field */}
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  {/* Title Field */}
                   <div>
-                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-                      Status
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="status"
-                        name='status'
-                        value={task.status}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="inprogress">In Progress</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
-                    </div>
-                  </div>
-
-                  {/* Priority Field */}
-                  <div>
-                    <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-                      Priority
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="priority"
-                        name='priority'
-                        value={task.priority}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
-                      >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
-                    </div>
-                  </div>
-
-                  {/* Due Date Field */}
-                  <div>
-                    <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
-                      Due Date
-                    </label>
-                    <input
-                      type="datetime-local"
-                      id="dueDate"
-                      name='dueData'
-                      value={task.dueDate}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    />
-                  </div>
-
-                  {/* Assign To Field */}
-                  <div>
-                    <label htmlFor="assignTo" className="block text-sm font-medium text-gray-700 mb-1">
-                      Assign To
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                      Title
                     </label>
                     <input
                       type="text"
-                      id="assignTo"
-                      name='assignTo'
-                      value={task.assignTo}
+                      id="title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      placeholder="Assignee name or email"
+                      placeholder="Task title"
+                      required
                     />
                   </div>
-                </div>
-              </div>
 
-              <motion.div
-                className="mt-8 flex justify-end gap-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={closeModal}
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                  {/* Description Field */}
+                  <div>
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      rows={4}
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      placeholder="Task description"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Status Field */}
+                    <div>
+                      <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                        Status
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="status"
+                          name="status"
+                          value={formData.status}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="inprogress">In Progress</option>
+                          <option value="completed">Completed</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+                      </div>
+                    </div>
+
+                    {/* Priority Field */}
+                    <div>
+                      <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
+                        Priority
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="priority"
+                          name="priority"
+                          value={formData.priority}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
+                        >
+                          <option value="low">Low</option>
+                          <option value="medium">Medium</option>
+                          <option value="high">High</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+                      </div>
+                    </div>
+
+                    {/* Due Date Field */}
+                    <div>
+                      <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
+                        Due Date
+                      </label>
+                      <input
+                        type="datetime-local"
+                        id="dueDate"
+                        name="dueDate"
+                        value={formatDateForInput(formData.dueDate)}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      />
+                    </div>
+
+                    {/* Assign To Field */}
+                    <div>
+                      <label htmlFor="assignTo" className="block text-sm font-medium text-gray-700 mb-1">
+                        Assign To
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="assignTo"
+                          name="assignTo"
+                          value={formData.assignTo}
+                          onChange={handleAssignUser}
+                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
+                        >
+                          <option value="">Unassigned</option>
+                          {userData?.map((user) => (
+                            <option value={user._id} key={user._id}>
+                              {user.email}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <motion.div
+                  className="mt-8 flex justify-end gap-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
                 >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  whileHover={{
-                    scale: 1.03,
-                    boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-2 cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm"
-                  style={{
-                    background: 'linear-gradient(to right, #6366f1, #8b5cf6)',
-                    boxShadow: '0 1px 3px 0 rgba(99, 102, 241, 0.3)',
-                  }}
-                >
-                  <PencilIcon className="h-4 w-4" />
-                  Update Task
-                </motion.button>
-              </motion.div>
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={closeModal}
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    type="submit"
+                    whileHover={{
+                      scale: 1.03,
+                      boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm"
+                    style={{
+                      background: 'linear-gradient(to right, #6366f1, #8b5cf6)',
+                      boxShadow: '0 1px 3px 0 rgba(99, 102, 241, 0.3)',
+                    }}
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                    Update Task
+                  </motion.button>
+                </motion.div>
+              </form>
             </motion.div>
           </div>
         </div>

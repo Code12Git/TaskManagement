@@ -5,8 +5,8 @@ const taskSchema = z.object({
     .max(100, 'Title cannot exceed 100 characters')
     .optional(),
 
-  description: z.string().min(10, 'Description must be at least 10 characters')
-    .max(500, 'Description cannot exceed 500 characters'),
+    description: z.string().min(10, 'Description must be at least 10 characters')
+    .max(5000, 'Description cannot exceed 5000 characters'),
 
   dueDate: z.coerce.date()
   .min(new Date(), "Due date must be in future")

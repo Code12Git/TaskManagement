@@ -42,6 +42,8 @@ const login = async (body) => {
         ...UNAUTHORIZED,
         message: "Invalid email or password",
       });
+      user.lastLogin = new Date();
+      await user.save();  
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -49,7 +51,7 @@ const login = async (body) => {
       { expiresIn: "7d" }
     );
 
-    return { user, token };
+    return { user, token,lastLogin:user.lastLogin };
   } catch (err) {
     throw err;
   }
@@ -61,25 +63,38 @@ const adminLogin = async () => {
       email: fromEnv("ADMIN_EMAIL"),
       password: fromEnv("ADMIN_PASSWORD"),
     };
+
     const admin = await userModel.findOne({ email: adminCreds.email });
     if (!admin)
       throw new AppError({ ...NOT_FOUND, message: "Admin not found" });
+
     const isMatch = await bcrypt.compare(adminCreds.password, admin.password);
     if (!isMatch)
       throw new AppError({
         ...UNAUTHORIZED,
         message: "Invalid email or password",
       });
+
+    admin.lastLogin = new Date();
+    await admin.save();
+
     const token = jwt.sign(
-      { userId: adminCreds._id, email: adminCreds.email },
+      { userId: admin._id, email: admin.email },
       fromEnv("SECRET_KEY"),
       { expiresIn: "7d" }
     );
-    return { admin, token };
+
+    return {
+      admin,
+      token,
+      lastLogin: admin.lastLogin
+    };
+
   } catch (err) {
     throw err;
   }
 };
+
 
 const forgotPassword = async (body) => {
   const { email } = body;

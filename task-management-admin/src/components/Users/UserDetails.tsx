@@ -162,7 +162,7 @@ const UserDetails = () => {
                         <td key={i} className="px-6 py-4 whitespace-nowrap">
                           <div className='flex items-center gap-4'>
                             <button onClick={()=>deleteHandler(user._id)} className='text-red-400 cursor-pointer'><Delete  /></button>
-                            <button className='text-blue-400 cursor-pointer'><EditRole user={user} /></button>
+                           <EditRole user={user} />
                           </div>
                         </td>
                       );

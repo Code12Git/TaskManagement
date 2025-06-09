@@ -57,6 +57,8 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
     high: 'bg-red-100 text-red-800',
   };
 
+  console.log(task)
+
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
@@ -127,7 +129,7 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
                     color: priorityColors[task?.priority?.toLowerCase()] || 'bg-gray-100 text-gray-800'
                   },
                   { label: 'Due Date', value: formatDate(task?.dueDate) },
-                  { label: 'Assigned To', value: task?.assignTo },
+                  { label: 'Assigned To', value: task?.assignTo?.name },
                   { label: 'Created At', value: formatDate(task?.createdAt) },
                   { label: 'Updated At', value: formatDate(task?.updatedAt) },
                   { label: 'User ID', value: task?.userId },

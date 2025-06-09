@@ -91,5 +91,14 @@ const uploadAvatar = async(request,response) => {
     }
 }
 
+const userInfo = async(request,response) => {
+    try{
+        const result = await userManager.userInfo()
+        return responseManager.sendSuccessResponse(response,result,'User Info fetched successfully!')
+    }catch(err){
+        return responseManager.sendErrorResponse(response,err,'Error fetching userInfo')
+    }
+}
 
-module.exports = {getUser,assignUser,countUsers,deleteUser,changeRole,updateUser,uploadAvatar}
+
+module.exports = {getUser,assignUser,countUsers,deleteUser,changeRole,updateUser,uploadAvatar,userInfo}

@@ -3,10 +3,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+
+
 
 const Sidebar = () => {
   const [selectedItem, setSelectedItem] = useState('Dashboard');
-  
+  const router = useRouter();
   const menuItems = [
     { name: 'Dashboard', icon: '📊', linkTo: '/' },
     { name: 'Projects', icon: '📁', linkTo: '/projects' },
@@ -17,7 +21,6 @@ const Sidebar = () => {
     { name: 'Reports', icon: '📈', linkTo: '/reports' },
     { name: 'Settings', icon: '⚙️', linkTo: '/settings' },
   ];
-
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -34,10 +37,16 @@ const Sidebar = () => {
     hover: { scale: 1.03, originX: 0 },
   };
 
+
+  const logoutHandler = () => {
+    localStorage.removeItem('admin')
+    localStorage.removeItem('token')
+    localStorage.removeItem('persist:root');
+    router.push('/admin');
+  }
+
   return (
-    <div className="h-screen fixed  flex flex-col overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-      {/* Gradient overlay for better text readability */}
-      
+<div className="h-screen fixed flex-col overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 hidden md:flex">      
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full text-white">
         {/* Header */}
@@ -96,21 +105,36 @@ const Sidebar = () => {
 
         {/* Footer */}
         <div className="p-4 border-t border-white/10">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex items-center gap-3"
-          >
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold backdrop-blur-md">
-              U
-            </div>
-            <div>
-              <p className="text-sm font-medium">User Admin</p>
-              <p className="text-xs text-white/70">admin@example.com</p>
-            </div>
-          </motion.div>
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 0.5 }}
+    className="flex items-center gap-3"
+  >
+    <div className='flex flex-col gap-2'>
+      <div className='flex gap-2 items-center'>
+        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold backdrop-blur-md">
+          U
         </div>
+        <div>
+          <p className="text-sm font-medium">User Admin</p>
+          <p className="text-xs text-white/70">admin@example.com</p>
+        </div>
+      </div>
+      <div>
+        <motion.button 
+          onClick={logoutHandler}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          className="ml-10 mt-1 cursor-pointer px-4 py-2 text-sm text-white bg-white/10 hover:bg-white/20 rounded-md backdrop-blur-md transition-all border border-white/10"
+        >
+          Logout
+        </motion.button>
+      </div>
+    </div>
+  </motion.div>
+</div>
+
       </div>
     </div>
   );
