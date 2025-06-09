@@ -12,6 +12,7 @@ const app = express();
 const server = createServer(app);
 
 const allowedOrigins = [
+  'https://task-management-pi-virid.vercel.app/',
   /\.vercel\.app$/, 
   /\.now\.sh$/,    
   'http://localhost:3000', 
