@@ -104,7 +104,7 @@ export interface userInfo {
 
 export interface Task {
   _id: string;
-  assignTo: {
+  assignTo?: {
     name: string;
     _id: string;
   };
@@ -116,4 +116,12 @@ export interface Task {
   title: string;
   updatedAt: string;
   userId: string;
+}
+
+export interface TaskInput {
+  title: string;
+  description: string;
+  dueDate: Date;
+  priority: "low" | "medium" | "high";
+  status: "not-started" | "in-progress" | "completed";
 }

@@ -3,12 +3,14 @@
 import { Dialog, Transition } from '@headlessui/react';
 import z from 'zod'
 import { Fragment, useEffect, useState } from 'react';
-import {  useForm } from 'react-hook-form';
+import {  SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { PlusIcon, CircleX, ChevronDown } from 'lucide-react';
 import { generateDescription, generatePriority } from '@/helpers/openai';
 import taskSchema from '@/validations/taskSchema';
+import { useAppDispatch } from '@/hooks/reduxHooks';
+import { create, getAllTasks } from '@/redux/actions/taskAction';
 
 interface CreateProps {
   isModalOpen: boolean;
@@ -37,8 +39,11 @@ const CreateTask = ({ isModalOpen, setIsModalOpen }: CreateProps) => {
       status: undefined,
     },
   });
+  const dispatch = useAppDispatch();
+
   const title = watch('title')
   const [isGenerating,setIsGenerating] = useState(false)
+
 
   useEffect(() => {
     const generateTaskDetails = async () => {
@@ -58,7 +63,7 @@ const CreateTask = ({ isModalOpen, setIsModalOpen }: CreateProps) => {
             ? generatedPrior.toLowerCase()
             : 'medium';
             
-          setValue('priority', priority);
+          setValue('priority', priority as 'low' | 'medium' | 'high');
         } catch (error) {
           console.error('Failed to generate task details:', error);
         } finally {
@@ -77,8 +82,10 @@ const CreateTask = ({ isModalOpen, setIsModalOpen }: CreateProps) => {
     reset()
   };
 
-  const onSubmit = () => {
-    console.log('Triggered')
+  const onSubmit: SubmitHandler<TaskForm> = async (formData) => {
+    await dispatch(create(formData))
+    await dispatch(getAllTasks());
+    closeModal();
   }
 
 

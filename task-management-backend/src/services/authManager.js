@@ -3,7 +3,7 @@ const { AppError, fromEnv } = require("../utils");
 const { CONFLICT, UNAUTHORIZED, NOT_FOUND } = require("../utils/errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const {sendResetPasswordLink} = require("./emailManager");
+const { sendResetPasswordLink } = require("./emailManager");
 
 const register = async (body) => {
   const { name, email, username, password } = body;
@@ -42,8 +42,8 @@ const login = async (body) => {
         ...UNAUTHORIZED,
         message: "Invalid email or password",
       });
-      user.lastLogin = new Date();
-      await user.save();  
+    user.lastLogin = new Date();
+    await user.save();
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -51,35 +51,44 @@ const login = async (body) => {
       { expiresIn: "7d" }
     );
 
-    return { user, token,lastLogin:user.lastLogin };
+    return { user, token, lastLogin: user.lastLogin };
   } catch (err) {
     throw err;
   }
 };
 
-const adminLogin = async () => {
+const adminLogin = async (body) => {
+  const { email, password } = body;
+
   try {
-    const adminCreds = {
-      email: fromEnv("ADMIN_EMAIL"),
-      password: fromEnv("ADMIN_PASSWORD"),
-    };
-
-    const admin = await userModel.findOne({ email: adminCreds.email });
-    if (!admin)
-      throw new AppError({ ...NOT_FOUND, message: "Admin not found" });
-
-    const isMatch = await bcrypt.compare(adminCreds.password, admin.password);
-    if (!isMatch)
+    const admin = await userModel.findOne({ email }).select("+password");
+    if (!admin) {
       throw new AppError({
         ...UNAUTHORIZED,
         message: "Invalid email or password",
       });
+    }
+
+    if (admin.role !== "admin") {
+      throw new AppError({
+        ...UNAUTHORIZED,
+        message: "Access denied. Not an admin user.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      throw new AppError({
+        ...UNAUTHORIZED,
+        message: "Invalid email or password",
+      });
+    }
 
     admin.lastLogin = new Date();
     await admin.save();
 
     const token = jwt.sign(
-      { userId: admin._id, email: admin.email },
+      { userId: admin._id, email: admin.email, role: admin.role },
       fromEnv("SECRET_KEY"),
       { expiresIn: "7d" }
     );
@@ -87,24 +96,19 @@ const adminLogin = async () => {
     return {
       admin,
       token,
-      lastLogin: admin.lastLogin
+      lastLogin: admin.lastLogin,
     };
-
   } catch (err) {
     throw err;
   }
 };
 
-
 const forgotPassword = async (body) => {
   const { email } = body;
   try {
-
-    const jwtToken = jwt.sign(
-      { email: email },
-      fromEnv("SECRET_KEY"),
-      { expiresIn: "15m" }
-    );
+    const jwtToken = jwt.sign({ email: email }, fromEnv("SECRET_KEY"), {
+      expiresIn: "15m",
+    });
     const resetLink = `http://localhost:3000/reset-password/${jwtToken}`;
 
     const sendEmail = await sendResetPasswordLink(email, resetLink);
@@ -114,37 +118,35 @@ const forgotPassword = async (body) => {
   }
 };
 
-
 const resetPassword = async (body) => {
-  console.log(body)
+  console.log(body);
   // console.log(token,newPassword)
-  const {token,password} = body;
+  const { token, password } = body;
   try {
-     const decoded = jwt.verify(token, fromEnv("SECRET_KEY"));
+    const decoded = jwt.verify(token, fromEnv("SECRET_KEY"));
     const { email } = decoded;
 
-     const user = await userModel.findOne({ email });
-     if (!user) throw new AppError({ ...NOT_FOUND, message: "User not found" });
+    const user = await userModel.findOne({ email });
+    if (!user) throw new AppError({ ...NOT_FOUND, message: "User not found" });
 
-     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-     user.password = hashedPassword;
-      await user.save();
+    user.password = hashedPassword;
+    await user.save();
 
     return { message: "Password reset successfully" };
   } catch (err) {
-    if (err.name === 'TokenExpiredError') {
+    if (err.name === "TokenExpiredError") {
       throw new AppError({ ...UNAUTHORIZED, message: "Reset link expired" });
     }
     throw err;
   }
 };
 
-
 module.exports = {
   register,
   login,
   adminLogin,
   forgotPassword,
-  resetPassword
+  resetPassword,
 };

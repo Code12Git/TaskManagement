@@ -82,7 +82,6 @@ const updateUser = async(request,response) => {
 
 
 const uploadAvatar = async(request,response) => {
-    console.log('Entered')
     try{
         const result = await userManager.uploadAvatar(request.files,request.user.id)
         return responseManager.sendSuccessResponse(response,result,'Avatar Uploaded Successfully!')

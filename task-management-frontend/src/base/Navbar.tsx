@@ -91,7 +91,7 @@ const Navbar = () => {
           transition={{ duration: 0.3 }}
           className="sm:hidden px-4 pb-4 text-white"
         >
-          {['/', '/dashboard', '/addtask', '/task'].map((path, i) => (
+          {['/', '/dashboard', '/addtask', '/task','/user'].map((path, i) => (
             <Link
               key={i}
               href={path}

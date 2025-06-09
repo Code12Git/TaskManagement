@@ -29,7 +29,6 @@ const UserDetails = () => {
     };
     fetchUsers();
   }, [dispatch]);
-  console.log(userData)
 
   const deleteHandler = async (id: string) => {
     dispatch(deleteUsers(id));

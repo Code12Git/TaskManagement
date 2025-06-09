@@ -185,21 +185,35 @@ export default function Homepage() {
             TaskFlow helps teams organize, track, and manage their work efficiently. From simple to-do lists to complex projects, we{"'"}ve got you covered.
           </p>
           <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-           { !userData && !token &&(<div className="rounded-md shadow">
-              <Link href="/register" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
-                Get started
-              </Link>
-            </div>)}
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-              <Link href="/addtask" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-                Go to add task
-              </Link>
-            </div>
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-              <Link href="/task" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-cyan-600 bg-white hover:bg-slate-50 md:py-4 md:text-lg md:px-10">
-                See all tasks
-              </Link>
-            </div>
+          {!userData && !token ? (
+  <div className="rounded-md shadow">
+    <Link
+      href="/register"
+      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+    >
+      Get started
+    </Link>
+  </div>
+) : (
+  <div className="flex flex-col sm:flex-row sm:mt-0">
+    <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+      <Link
+        href="/addtask"
+        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
+      >
+        Go to add task
+      </Link>
+    </div>
+    <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+      <Link
+        href="/task"
+        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-cyan-600 bg-white hover:bg-slate-50 md:py-4 md:text-lg md:px-10"
+      >
+        See all tasks
+      </Link>
+    </div>
+  </div>
+)}
           </div>
         </div>
       </div>

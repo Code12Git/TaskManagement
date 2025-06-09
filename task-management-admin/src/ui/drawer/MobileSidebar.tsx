@@ -39,7 +39,7 @@ const MobileSidebar= () => {
       <Button 
   variant="ghost" 
   size="icon"
-  className="bg-gray-100 text-gray-800 shadow hover:bg-gray-300 border border-gray-300 md:hidden"
+  className="bg-gray-100 cursor-pointer text-gray-800 shadow hover:bg-gray-300 border border-gray-300"
 >
   <FiMenu className="h-6 w-6" />
 </Button>
