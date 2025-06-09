@@ -13,7 +13,7 @@ const server = createServer(app);
 
 const io = new socketIo.Server(server, {
   cors: {
-    origin: ["http://localhost:3000","http://localhost:3002"],  
+    origin: ["https://task-management-git-feature-draganddrop-code12gits-projects.vercel.app"],  
     methods: ["GET", "POST","PUT"],
     credentials: true
   }
@@ -30,7 +30,7 @@ connectDB().catch(err => {
 
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3000","http://localhost:3002"], 
+  origin: ["https://task-management-git-feature-draganddrop-code12gits-projects.vercel.app"], 
   credentials: true
 }));
 app.use('/api', routes); 
