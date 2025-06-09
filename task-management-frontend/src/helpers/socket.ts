@@ -1,10 +1,13 @@
 // helpers/socket.ts
 import { io } from 'socket.io-client';
 
-const URL = process.env.NEXT_PUBLIC_API_BASE_URL 
+const URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://taskmanagement-mvcu.onrender.com'
+    : 'http://localhost:3001';
 
-export const socket = io(URL || '', {
-  path: '/socket.io',
+export const socket = io(URL, {
+  path: '/api/socket.io',
   transports: ['websocket', 'polling'],
   autoConnect: false,
   withCredentials: true,

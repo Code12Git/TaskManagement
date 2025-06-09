@@ -10,9 +10,10 @@ const SocketService = require('./services/socketService');
 
 const app = express();
 const server = createServer(app);
+const PORT = fromEnv('PORT') || 3001;
 
 const allowedOrigins = [
-  'https://task-management-pi-virid.vercel.app/',
+  'https://task-management-pi-virid.vercel.app',
   /\.vercel\.app$/, 
   /\.now\.sh$/,    
   'http://localhost:3000', 
@@ -54,7 +55,6 @@ const io = socketIo(server, {
 new SocketService(io);
 
 
-const PORT = fromEnv('PORT') || 3001;
 
 connectDB().catch(err => {
   logger.error('Database connection failed', err);
@@ -71,6 +71,10 @@ app.get('/', (req, res) => {
     service: 'Your Service Name'
   });
 });
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+});
+
 
 app.set('io', io);
 
