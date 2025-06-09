@@ -1,136 +1,172 @@
-# Task Management System
 
+# Task Management System
 
 ## Overview
 
-A feature-rich Task Management System designed for small teams to create, assign, track, and manage tasks efficiently. This application demonstrates proficiency in full-stack development with Next.js, Node.js, and MongoDB/PostgreSQL.
+A comprehensive Task Management System designed for teams to create, assign, track, and manage tasks efficiently. This full-stack application features advanced collaboration tools, AI-powered task suggestions, and real-time updates.
 
 ## Features
+
 ### Core Features
+- 🔒 Secure user authentication with JWT (login/register)
+- 🔄 Forgot & reset password functionality
+- 👤 User profile management with avatar upload
+- 📝 Full CRUD operations for tasks
+- 👥 Team collaboration with task assignment
+- 📧 Automated email notifications for task assignments/updates
+- 📊 Comprehensive admin dashboard with analytics
+- 🏷️ Custom tags and labels for tasks
+- � Kanban-style drag & drop task management
+- 🤖 AI-powered task descriptions and priority suggestions (Google Gemini integration)
+- 🔔 Real-time updates using Socket.io
 
-🔒 Secure user authentication with JWT
+### Dashboard Features
+- 📈 User analytics (active users, total users, new users)
+- 📉 Churn rate tracking
+- 📅 User join trends (Chart.js visualizations)
+- ✅ Task completion statistics
+- ⏰ Overdue task tracking
 
-📝 Full CRUD operations for tasks
-
-👥 Team collaboration with task assignment
-
-🔔 Notification system for assigned tasks
-
-📊 Comprehensive dashboard with:
-
-- Assigned tasks
-
-- Created tasks
-
-- Overdue tasks
-
-🔍 Advanced search and filtering
+### Task Management
+- 🔍 Advanced search and filtering
+- 🏷️ Priority levels and due dates
+- 📝 Markdown support for task descriptions
+- 🔄 Status workflow management (Todo → In Progress → Done)
 
 
 ## Tech Stack
 
 ### Frontend
 - Next.js (React framework)
-
 - TypeScript
-
 - Tailwind CSS
-
 - Redux (state management)
-
 - Socket.io (real-time communication)
+- Chart.js (data visualization)
+- Hello Pangea (drag and drop)
 
 ### Backend
-- Node.js with ExpressJs
-
+- Node.js with Express
 - TypeScript
-
 - JWT Authentication
-
 - MongoDB/PostgreSQL (database)
+- Socket.io (real-time updates)
+- Nodemailer (email notifications)
+- Google Gemini API (AI suggestions)
 
 ### Deployment
-
 - Vercel/Netlify (frontend deployment)
-
 - Railway/Render (backend deployment)
 
 ## Getting Started
 
 ### Prerequisites
 - Node.js (v16+)
-
 - npm or yarn
-
 - MongoDB/PostgreSQL database
+- OpenAI API key (for AI features)
 
+### Installation
 
-## Installation
-Clone the repository:
-
-bash
-
+1.Clone the repository:
+```bash
 git clone https://github.com/Code12Git/TaskManagement
-
 cd task-management-system
+```
 
-Install dependencies for both frontend and backend:
+2.Install dependencies for both frontend and backend:
 
-
-
-### Frontend
+Frontend
 ```bash
-cd client
+cd task-management-frontend
 npm install
 ```
 
-### Backend
+Backend
 ```bash
-cd ../server
+cd task-management-backend
 npm install
 ```
 
-### Set up environment variables:
+3.Set up environment variables:
 
-- Create .env files in both client and server directories
+Backend .env example:
+``` bash
+ PORT=3001
 
-- Example .env for backend:
+ NODE_ENV=development
 
-- DATABASE_URL=your_database_connection_string
-- JWT_SECRET=your_jwt_secret_key
-Run the application:
+ LOG_LEVEL=debug
 
+ NOSQL_DATABASE_URL='your mongodb_url'
 
-### In server directory
+ SECRET_KEY=your-secret-key
+
+ JWT_REFRESH_SECRET=your-jwt-refresh-secret
+
+ EMAIL_USER=your-email@example.com
+
+ EMAIL_PASS=your-email-app-password
+
+ ALLOWED_ORIGINS=https://your-frontend-domain.com
+
+ ADMIN_EMAIL=admin@example.com
+
+ ADMIN_PASSWORD=your-admin-password
+
+ CLOUD_NAME=your-cloudinary-cloud-name
+
+ API_KEY=your-cloudinary-api-key
+
+ API_SECRET=your-cloudinary-api-secret
+```
+Frontend .env.example:
 
 ```bash
-npm run start:dev
-```
+ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
-### In client directory
+ NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
+```
+4.Run the application:
+
+In server directory:
+
+```bash
+npm run start
+```
+In client directory:
+
 ```bash
 npm run dev
 ```
 
-- Access the application at http://localhost:3000
+5.Access the application at http://localhost:3000
 
 ## Deployment
 The application is deployed on:
 
-- Frontend: https://task-management-frontend-646j011m8-code12gits-projects.vercel.app/
+- Frontend(User): https://task-management-pi-virid.vercel.app
+
+- Frontend(Admin):https://task-management-admin-mu.vercel.app/
 
 - Backend: https://taskmanagement-mvcu.onrender.com/api
 
-## Approach & Architecture
-### System Design
+
+## System Architecture
+
+### Key Design Decisions
 
 - Modular architecture with clear separation of concerns
 
 - RESTful API design with proper status codes
 
-- Real-time updates via WebSockets
+- Real-time updates via WebSockets (Socket.io)
 
 - Optimistic UI updates for better user experience
+
+- AI integration for task enhancement suggestions
+
+- Comprehensive analytics dashboard
 
 ### Security Considerations
 
@@ -144,23 +180,55 @@ The application is deployed on:
 
 - CORS policy configuration
 
+- Secure file upload handling
+
 ### Performance Optimizations
 
 - Database indexing for frequent queries
- 
+
+- Client-side caching with Redux
+
+- Lazy loading for dashboard components
+
+- Optimized image handling for avatars
 
 ## Future Improvements
-* Role-Based Access Control (RBAC): Implement Admin, Manager, and Regular User roles with different permissions.
-* Real-Time Notifications: Use WebSockets (Socket.io) to instantly notify users when a task is assigned or updated.
-* Recurring Tasks: Add functionality for tasks that repeat daily, weekly, or monthly.
-* Audit Logging: Maintain a log of all user actions (task created, assigned, deleted, updated) for transparency.
-* Offline Support (PWA): Make your app a Progressive Web App (PWA) so it works offline and syncs when back online.
-* Unit and Integration Tests: Add Jest or Mocha tests covering important functionalities and business logic.
-* Analytics Dashboard: Track metrics like number of completed tasks per user, overdue trends, task completion rates.
-* Customizable Notifications: Allow users to set their notification preferences (email, in-app alerts, mute certain updates).
 
-- API Documentation: Swagger/OpenAPI documentation
+### Planned Features
 
-### Support
-For any issues or questions, please open an issue in the GitHub repository or contact the maintainer directly.
+🔔 Automated due date reminders (push notifications)
+
+📅 Calendar view for tasks
+
+📱 Mobile application (React Native)
+
+📊 Advanced reporting and analytics
+
+🗂️ Project management (grouping tasks into projects)
+
+🔄 Task dependencies and relationships
+
+📤 CSV/PDF export options
+
+### Technical Enhancements
+✅ Comprehensive unit and integration testing
+
+📜 API documentation with Swagger/OpenAPI
+
+🚀 CI/CD pipeline implementation
+
+🛡️ Enhanced security audits
+
+⚡ Performance benchmarking and optimization
+
+## Support
+
+For any issues or questions, please:
+
+- Open an issue in the GitHub repository
+
+- Contact the maintainer directly
+
+Contributions are welcome! Please fork the repository and submit a pull request.
+
 
