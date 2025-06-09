@@ -12,7 +12,6 @@ const getUser = async(request,response) => {
     }
 }
 
-// taskController.js
 const assignUser = async (request, response) => {
     try {
         const io = request.app.get('io');   

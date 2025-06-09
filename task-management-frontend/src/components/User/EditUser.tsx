@@ -124,9 +124,7 @@ const EditUser: React.FC = () => {
       const formDataObj = new FormData();
       formDataObj.append('avatarUrl', file);
 
-      const response = await formRequest.post('/user/upload-avatar', formDataObj, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response = await formRequest.post('/user/upload-avatar', formDataObj);
       const newAvatarUrl = response.data.data.avatarUrl;
       return newAvatarUrl;
     } catch (error) {
