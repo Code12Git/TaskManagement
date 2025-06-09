@@ -21,7 +21,6 @@ const initialState: userState = {
   count:null
 };
 
-console.log(initialState.userData)
 
 const userReducer = (state = initialState, { type, payload }: { type: string; payload: userPayload }) => {
   switch (type) {
@@ -54,7 +53,6 @@ const userReducer = (state = initialState, { type, payload }: { type: string; pa
         error: null
       };
     case GET_USERS_COUNT_SUCCESS:
-      console.log(payload)
       return {
         ...state,
         isLoading: false,
@@ -64,7 +62,6 @@ const userReducer = (state = initialState, { type, payload }: { type: string; pa
           if (payload.count) {
             payload.count.forEach((item: { count: number; month: string }) => {
               const monthIndex = Number(item.month.split("-")[1]) - 1;
-              console.log(`Month: ${item.month}, Index: ${monthIndex}, Count: ${item.count}`);
               counts[monthIndex] = item.count;
             });
           }

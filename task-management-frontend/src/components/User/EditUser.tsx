@@ -42,10 +42,8 @@ const EditUser: React.FC = () => {
 
   useEffect(() => {
     if (auth.user) {
-      console.log(auth.user)
       try {
         const parsedUser =  auth?.user as UserData;
-        console.log(parsedUser)
         setFormData(parsedUser);
         if (parsedUser.avatarUrl) {
           setAvatarUrl(parsedUser.avatarUrl);

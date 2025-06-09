@@ -29,7 +29,6 @@ const SearchBar = () => {
 
     };
 
-    console.log(filters);  
 
     return (
         <motion.div 

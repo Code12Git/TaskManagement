@@ -119,8 +119,6 @@ const forgotPassword = async (body) => {
 };
 
 const resetPassword = async (body) => {
-  console.log(body);
-  // console.log(token,newPassword)
   const { token, password } = body;
   try {
     const decoded = jwt.verify(token, fromEnv("SECRET_KEY"));

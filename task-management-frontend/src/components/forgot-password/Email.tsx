@@ -7,7 +7,6 @@ import { publicRequest } from '@/helpers/axios';
 const Email = () => {
     const [email,setEmail] = useState('')
 
-    console.log(email)
 
     const sendforgotLink = async(e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();

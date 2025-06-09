@@ -10,7 +10,6 @@ const verifyData = (schema) => async (req, res, next) => {
     req.body = parsedBody;
     next();
   } catch (err) {
-    console.log("Error:", err);
     next(new AppError("INTERNAL_SERVER_ERROR", "Something went wrong", 500));
   }
 };

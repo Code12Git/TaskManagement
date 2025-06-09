@@ -7,7 +7,6 @@ const initialState:taskState = {
     isLoading:false,
     error:null
 }
-console.log("FilteredTask:",initialState.filteredTasks)
 
 const taskReducer = (state = initialState, { type, payload }: { type: string; payload: taskPayload }) => {
     switch(type){
@@ -37,7 +36,6 @@ const taskReducer = (state = initialState, { type, payload }: { type: string; pa
           error: null,
         };
       case UPDATE_TASK_SUCCESS:
-        console.log(payload);
         return {
           ...state,
           isLoading: false,
@@ -59,7 +57,6 @@ const taskReducer = (state = initialState, { type, payload }: { type: string; pa
                 isLoading:true
             }
         case DELETE_TASKS_SUCCESS:
-            console.log(payload)
             return {
                 ...state,
                 isLoading:false,
@@ -69,7 +66,6 @@ const taskReducer = (state = initialState, { type, payload }: { type: string; pa
         
             case SEARCH_TASKS_SUCCESS:
                 const normalizedSearchTerm = (payload.searchTerm || '').toLowerCase().replace(/\s+/g, '');
-                console.log('Normalized search term:', normalizedSearchTerm ,state.filteredTasks);
                 
                 return {
                   ...state,
@@ -78,7 +74,6 @@ const taskReducer = (state = initialState, { type, payload }: { type: string; pa
                     ? state.tasks.filter(task => {
                         const normalizedTitle = task.title.toLowerCase().replace(/\s+/g, '');
                         const normalizedDescription = task.description.toLowerCase().replace(/\s+/g, '');
-                        console.log(`Comparing: "${normalizedTitle}" with "${normalizedSearchTerm }"`);
                         return normalizedTitle.includes(normalizedSearchTerm ) || normalizedDescription.includes(normalizedSearchTerm );
                       })
                     : [],
@@ -112,7 +107,6 @@ const taskReducer = (state = initialState, { type, payload }: { type: string; pa
                         if (!statusFilter && priorityFilter) {
                             return taskPriority.includes(priorityFilter);
                         }
-                        console.log("Status Filter:",statusFilter,"Priority Filter:",priorityFilter,"Task Priority:",taskPriority,"Task Status:",taskStatus)
                         // If both filters are provided
                         return taskStatus.includes(statusFilter) && 
                                taskPriority.includes(priorityFilter);

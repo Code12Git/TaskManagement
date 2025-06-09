@@ -22,7 +22,7 @@ const Register = () => {
         handleSubmit,
         clearErrors,
         reset,
-        formState: { errors, isSubmitting },
+        formState: { errors},
       } = useForm<registerForm>({
         resolver: zodResolver(registerValidation),
         defaultValues: {
@@ -34,7 +34,6 @@ const Register = () => {
       });
 
   const submitHandler = async (data:registerForm) => {
-    console.log(errors,isSubmitting)
     try{
   const res = await        dispatch(registerUser(data))
         clearErrors()

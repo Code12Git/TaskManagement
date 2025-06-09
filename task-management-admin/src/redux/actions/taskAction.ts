@@ -43,7 +43,6 @@ export const filteredTasks = (searchTerm:string) => (dispatch:Dispatch) =>{
 
 export const filterTasks = (filtered:{priority:string,status:string}) => (dispatch:Dispatch) => {
   dispatch({type:FILTERED_TASKS_REQUEST})
-  console.log(filtered)
   try{
     dispatch({type:FILTERED_TASKS_SUCCESS,payload:filtered})
   }catch(err){
@@ -61,7 +60,6 @@ export const filterTasks = (filtered:{priority:string,status:string}) => (dispat
 
 export const deleteTasks = (id:string) => async(dispatch:Dispatch) => {
   dispatch({type:DELETE_TASKS_REQUEST})
-  console.log(id)
   try{
     await privateRequest.delete(`/tasks/${id}`)
     dispatch({type:DELETE_TASKS_SUCCESS,payload:{id:id}})
@@ -84,7 +82,6 @@ export const getAllTasks = () => async(dispatch:Dispatch) => {
     dispatch({type:GET_TASKS_REQUEST})
     try{
         const res = await privateRequest.get<AuthResponse>('/tasks/allTasks')
-        console.log(res.data.data)
         dispatch({type:GET_TASKS_SUCCESS,payload:res.data.data})
     }catch (err) {
         const error = err as ApiError;

@@ -29,7 +29,6 @@ const taskState: taskState = {
   error: null,
 };
 
-console.log(taskState.taskData);
 const taskReducer = (
   state = taskState,
   { type, payload }: { type: string; payload: taskPayload }
@@ -64,7 +63,6 @@ const taskReducer = (
         error: null,
       };
     case GET_TASKS_SUCCESS:
-      console.log(payload);
       return {
         ...state,
         isLoading: false,
@@ -107,7 +105,6 @@ const taskReducer = (
         error: null,
       };
     case UPDATE_TASK_SUCCESS:
-      console.log(payload);
       return {
         ...state,
         isLoading: false,
@@ -132,7 +129,6 @@ const taskReducer = (
         error: null,
       };
     case UPDATE_TASKS_SUCCESS:
-      console.log(payload);
       return {
         ...state,
         isLoading: false,
@@ -192,7 +188,6 @@ const taskReducer = (
 
         return matchesSearch && matchesPriority && matchesStatus && matchesDate;
       });
-      console.log(filteredData);
       return { ...state, filteredData: filteredData };
 
     case FILTERED_TASKS_FAILURE:

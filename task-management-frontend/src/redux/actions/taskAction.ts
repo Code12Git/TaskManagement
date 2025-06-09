@@ -9,7 +9,6 @@ export const create = (data: Task) => async (dispatch: Dispatch) => {
     try {
       const response = await privateRequest.post('/tasks', data); 
       const task = response.data;
-      console.log(task)
       dispatch({ type: ADD_TASK_SUCCESS, payload: task });
     } catch (err) {
         const error = err as { response: { data: { code: { message: string } } } };
@@ -46,7 +45,6 @@ export const get = () =>async (dispatch:Dispatch) => {
     dispatch({type:GET_TASK_REQUEST})
     try{
         const getTask = await privateRequest.get(`/tasks`)
-        console.log(getTask)
         dispatch({type:GET_TASK_SUCCESS,payload:getTask.data.data})
     }catch(err){
         const error = err as {response : {data: {code:{message:string}}}}
@@ -56,11 +54,9 @@ export const get = () =>async (dispatch:Dispatch) => {
 
 
 export const updateAll = (data:Task[]) => async(dispatch:Dispatch) => {
-  console.log(data)
   dispatch({type:UPDATE_TASKS_REQUEST})
   try{
-    const updateTask = await privateRequest.put('/tasks/allTasks',{updatedTasks:data})
-    console.log(updateTask)
+     await privateRequest.put('/tasks/allTasks',{updatedTasks:data})
     dispatch({type:UPDATE_TASKS_SUCCESS,payload:data})
 
   }catch(err){
@@ -74,7 +70,6 @@ export const getAll = () => async (dispatch: Dispatch) => {
     dispatch({ type: GET_TASKS_REQUEST });
     try {
       const { data } = await privateRequest.get('/tasks/allTasks');
-      console.log(data)
       
        dispatch({ 
         type: GET_TASKS_SUCCESS, 

@@ -20,12 +20,9 @@ const getUser = async () => {
 
 const deleteUser = async (params) => {
   const { userId } = params;
-  console.log(userId);
   try {
     const user = await userModel.findByIdAndDelete(userId);
-    console.log(user);
     if (!user) throw new AppError({ ...NOT_FOUND, message: "User not found" });
-    console.log(user);
     const task = await taskModel.findById({ assignTo: userId });
     if (!task) throw new AppError({ ...NOT_FOUND, message: "Task not found" });
     task.assignTo = null;
@@ -80,7 +77,6 @@ const assignUser = async (body, user) => {
 };
 
 const countUsers = async () => {
-  console.log("countUsers");
   try {
     const usersByMonth = await userModel.aggregate([
       {
@@ -115,7 +111,6 @@ const countUsers = async () => {
         },
       },
     ]);
-    console.log(usersByMonth);
 
     if (!usersByMonth)
       throw new AppError({
@@ -204,7 +199,6 @@ const userInfo = async () => {
 
 const changeRole = async (body, params) => {
   const { userId } = params;
-  console.log("Body:", body);
   const { role } = body;
   try {
     const userRole = await userModel.findByIdAndUpdate(
@@ -238,8 +232,7 @@ const updateUser = async (body, params) => {
 };
 
 const uploadAvatar = async (files, userId) => {
-  console.log('Entered uploadAvatar');
-  console.log("files", files);
+
 
   try {
     if (!files || !files.avatarUrl || files.avatarUrl.length === 0) {

@@ -14,12 +14,9 @@ import { deleteOne, update } from "@/redux/actions/taskAction";
 import { assignUser } from "@/redux/actions/userAction";
 import { Task, User } from "@/types";
 import UpdateTaskModal from "@/ui/modal/task/UpdateTaskModal";
-import useAuth from "@/hooks/useAuth";
 
 const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
   const dispatch = useAppDispatch();
-  const {user} = useAuth()
-  console.log(user._id)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [assignedUserId, setAssignedUserId] = useState(task?.assignTo?._id || "");
 
@@ -33,7 +30,6 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
 
 
   const handleSave = async (updatedTask: Task) => {
-    console.log("Task updated:", updatedTask);
     dispatch(update(updatedTask, task._id || ""));
     setIsModalOpen(false);
   };
@@ -42,7 +38,6 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
     await dispatch(deleteOne(id));
   };
 
-  console.log("Task:",task);
 
   const statusColors = {
     completed: "bg-green-500",

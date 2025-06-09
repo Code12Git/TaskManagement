@@ -33,7 +33,6 @@ const Page = () => {
 
 
   const { token } = useParams();
-  console.log(token)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

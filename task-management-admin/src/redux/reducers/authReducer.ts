@@ -24,7 +24,6 @@ const authReducer = (state = initialState, { type, payload }: { type: string; pa
         error: null
       };
     case ADMIN_LOGIN_SUCCESS:
-      console.log(payload)
       return {
         ...state,
         isLoading: false,

@@ -94,7 +94,6 @@ export const deleteUsers = (userId:string) => async(dispatch:Dispatch) => {
 
 export const updateUsers = (userId:string,role:string) => async(dispatch:Dispatch) => {
   dispatch({type:UPDATE_USERS_ROLE_REQUEST})
-  console.log(role)
   try{
     const res = await privateRequest.put(`/user/${userId}`,{role})
     dispatch({type:UPDATE_USERS_ROLE_SUCCESS,payload:res.data.data})
@@ -116,7 +115,6 @@ export const assignUser = (userId:string,taskId:string) => async (dispatch: Disp
   dispatch({ type: ASSIGN_USERS_REQUEST });
   try {
     await privateRequest.post<AuthResponse>('/user/assign',{userId,taskId});
-    console.log(userId,)
     dispatch({ 
       type: ASSIGN_USERS_SUCCESS, 
     });

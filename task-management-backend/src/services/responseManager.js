@@ -3,7 +3,6 @@ const _ = require("lodash");
 
 function sendErrorResponse(response, error) {
     let err = error;
-    console.log(error);
     err.message = error.message;
     let responseObject = {};
     if (err.name === "AppError") {

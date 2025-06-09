@@ -18,7 +18,6 @@ const update = async(request,response) => {
         const io = request.app.get('io');   
         const notificationService = new NotificationService(io);
         const result = await taskManager.update(request.body,request.params)
-        console.log("Result:",result)
         if (result && result.assignTo) {
             await notificationService.editTaskDetails(
                 result.assignTo,  
@@ -37,7 +36,6 @@ const update = async(request,response) => {
 }
 
 const updateTasks = async(request,response) => {
-    console.log(request.body)
     try{
         const result = await taskManager.updateAllTask(request.body)
         return responseManager.sendSuccessResponse(response,result,'All Tasks Update Successfully!')

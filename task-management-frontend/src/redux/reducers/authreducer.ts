@@ -50,7 +50,6 @@ const authReducer = (state = initialState, { type, payload }: { type: string; pa
         error: null
       };
     case LOGIN_SUCCESS:
-      console.log(payload)
       return {
         ...state,
         isLoading: false,

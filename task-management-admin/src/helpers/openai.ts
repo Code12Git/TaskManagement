@@ -34,7 +34,6 @@ export const generateDescription = async (title: string) => {
 
       // Extracting plain text from the generated response
       const generatedText = await result.response.text();
-        console.log(generatedText)
       // Returning the final generated email body text
       return generatedText;
     } catch (error) {
@@ -50,7 +49,6 @@ export const generatePriority = async (title: string) => {
     // Using the limiter to ensure no more than 3 email generations happen at once
     return limit(async () => {
         try {
-          console.log('Gone')
         // Creating a prompt to guide the AI in generating a relevant email body
         const prompt = `Based on the task title: "${title}", assign a priority level. The priority must be exactly one of the following: "high", "medium", or "low". Do not return anything else.`;
   
@@ -62,7 +60,6 @@ export const generatePriority = async (title: string) => {
   
         // Extracting plain text from the generated response
         const generatedText = await result.response.text();
-          console.log(generatedText)
         // Returning the final generated email body text
         return generatedText;
       } catch (error) {

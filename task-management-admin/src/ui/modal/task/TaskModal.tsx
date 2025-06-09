@@ -31,7 +31,6 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
     setIsOpen(false)
   };
 
-  console.log(updateModal)
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleString('en-GB', {
@@ -57,7 +56,6 @@ export default function TaskModal({ open, setIsOpen, task }: TaskProps) {
     high: 'bg-red-100 text-red-800',
   };
 
-  console.log(task)
 
   return (
     <Transition appear show={open} as={Fragment}>

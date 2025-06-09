@@ -23,7 +23,6 @@ async function sendResetPasswordLink(receiver, resetLink) {
       `,
     });
 
-    console.log("Password reset email sent: %s", info.messageId);
   } catch (error) {
     console.error("Error sending reset email:", error);
     throw new Error("Failed to send password reset email.");
@@ -67,7 +66,6 @@ async function sendTaskDetailsToAssignees(task, receiver, sender) {
       `,
     });
 
-    console.log("Task assignment email sent: %s", info.messageId);
   } catch (error) {
     console.error("Error sending task email:", error);
     throw new Error("Failed to send task assignment email.");

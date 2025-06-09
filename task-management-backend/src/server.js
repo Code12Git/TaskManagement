@@ -11,7 +11,6 @@ const SocketService = require('./services/socketService');
 const app = express();
 const server = createServer(app);
 
-// Dynamic CORS origin handling
 const allowedOrigins = [
   /\.vercel\.app$/, 
   /\.now\.sh$/,    
@@ -44,11 +43,15 @@ app.use(cors(corsOptions));
 
 const io = socketIo(server, {
   cors: corsOptions,
-  path: "/socket.io", 
-  transports: ["websocket", "polling"],  
+  path: '/api/socket.io',
+    transports: ["websocket", "polling"],  
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    cookie: false
 });
 
 new SocketService(io);
+
 
 const PORT = fromEnv('PORT') || 3001;
 
