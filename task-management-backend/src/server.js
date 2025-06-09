@@ -44,7 +44,7 @@ app.use(cors(corsOptions));
 
 const io = socketIo(server, {
   cors: corsOptions,
-  path: "/socket.io/", 
+  path: "/socket.io", 
   transports: ["websocket", "polling"],  
 });
 

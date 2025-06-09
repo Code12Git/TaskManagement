@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 const URL = process.env.NEXT_PUBLIC_API_BASE_URL 
 
 export const socket = io(URL || '', {
-  path: '/api/socket.io',
+  path: '/socket.io',
   transports: ['websocket', 'polling'],
   autoConnect: false,
   withCredentials: true,
