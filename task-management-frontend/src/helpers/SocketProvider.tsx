@@ -10,6 +10,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (user?._id) {
+      socket.connect(); // Ensure the socket is connected
       socket.emit("join", user._id); // Join the user's room
 
       // Handler for task assignment notifications
@@ -30,6 +31,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       return () => {
         socket.off("taskAssigned", handleTaskAssigned);
         socket.off("editTask", handleTaskEdited);
+        socket.disconnect();
       };
     }
   }, [user?._id]);

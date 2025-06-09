@@ -42,8 +42,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-const io = new socketIo.Server(server, {
-  cors: corsOptions
+const io = socketIo(server, {
+  cors: corsOptions,
+  path: "/socket.io/", 
+  transports: ["websocket", "polling"],  
 });
 
 new SocketService(io);

@@ -1,6 +1,13 @@
+// helpers/socket.ts
 import { io } from 'socket.io-client';
 
-// "undefined" means the URL will be computed from the `window.location` object
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3001';
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL 
 
-export const socket = io(URL);
+export const socket = io(URL || '', {
+  path: '/api/socket.io',
+  transports: ['websocket', 'polling'],
+  autoConnect: false,
+  withCredentials: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
