@@ -14,6 +14,7 @@ const PORT = fromEnv('PORT') || 3001;
 
 const allowedOrigins = [
   'https://task-management-pi-virid.vercel.app',
+  'https://task-management-admin-mu.vercel.app',
   /\.vercel\.app$/, 
   /\.now\.sh$/,    
   'http://localhost:3000', 
