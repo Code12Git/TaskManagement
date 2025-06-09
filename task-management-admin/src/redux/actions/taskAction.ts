@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
-import { DELETE_TASKS_FAILURE, DELETE_TASKS_REQUEST, DELETE_TASKS_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, SEARCH_TASKS_SUCCESS } from "../actionTypes/actionTypes";
-import { AuthResponse  } from '@/types/index';
+import { DELETE_TASKS_FAILURE, DELETE_TASKS_REQUEST, DELETE_TASKS_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, SEARCH_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes";
+import { AuthResponse, Task  } from '@/types/index';
 import { ApiError } from '@/types/index';
 import toast from 'react-hot-toast'
 import { privateRequest } from "@/helpers/axios";
@@ -73,4 +73,13 @@ export const getAllTasks = () => async(dispatch:Dispatch) => {
       }
 };
     
-    
+export const update= (data:Task,id:string) => async (dispatch:Dispatch) => {
+  dispatch({type:UPDATE_TASK_REQUEST})
+  try{
+      const updatedTask = await privateRequest.put(`/tasks/${id}`,data)
+      dispatch({type:UPDATE_TASK_SUCCESS,payload:updatedTask.data.data})
+  }catch(err){
+      const error = err as { response: { data: { code: { message: string } } } };
+      dispatch({type:UPDATE_TASK_FAILURE,payload:error.response.data.code.message || "Something went wrong"})
+  }
+}    

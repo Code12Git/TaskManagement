@@ -8,6 +8,8 @@ import { Task } from '@/types';
 import { useAppDispatch } from '@/hooks/hooks';
 import { create } from '@/redux/actions/taskAction';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { generateDescription, generatePriority } from '@/helpers/openai';
 
 type TaskForm = z.infer<typeof taskSchema>;
 
@@ -18,6 +20,8 @@ const AddTask = () => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<TaskForm>({
     resolver: zodResolver(taskSchema),
@@ -29,6 +33,39 @@ const AddTask = () => {
       status: undefined,
     },
   });
+
+  const title = watch('title')
+  const [isGenerating,setIsGenerating] = useState(false)
+
+  useEffect(() => {
+    const generateTaskDetails = async () => {
+      if (title && title.length > 3 && !watch('description')) {
+        setIsGenerating(true);
+        try {
+          const [generatedDesc, generatedPrior] = await Promise.all([
+            generateDescription(title),
+            generatePriority(title)
+          ]);
+          
+          setValue('description', generatedDesc || '');
+          
+          const validPriorities = ['low', 'medium', 'high'];
+          const priority = validPriorities.includes(generatedPrior?.toLowerCase()) 
+            ? generatedPrior.toLowerCase()
+            : 'medium';
+            
+          setValue('priority', priority as 'medium' | 'low' | 'high');
+        } catch (error) {
+          console.error('Failed to generate task details:', error);
+        } finally {
+          setIsGenerating(false);
+        }
+      }
+    };
+
+    const timer = setTimeout(generateTaskDetails, 1000);
+    return () => clearTimeout(timer);
+  }, [title, setValue, watch]);
 
   const onSubmit: SubmitHandler<TaskForm> = async (formData) => {
     try {
@@ -81,7 +118,7 @@ const AddTask = () => {
           {/* Description Field */}
           <div>
             <label htmlFor="description" className="block text-gray-700 font-medium mb-1">
-              Description
+            Description {isGenerating && <span className="text-blue-500">(Generating...)</span>}
             </label>
             <textarea
               id="description"
@@ -118,7 +155,7 @@ const AddTask = () => {
           {/* Priority Field */}
           <div>
             <label htmlFor="priority" className="block text-gray-700 font-medium mb-1">
-              Priority*
+            Priority {isGenerating && <span className="text-blue-500">(Generating...)</span>}
             </label>
             <select
               id="priority"

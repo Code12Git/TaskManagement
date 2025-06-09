@@ -17,5 +17,6 @@ router.post('/upload-avatar',verifyToken,upload.fields([
         maxCount: 1,
     },
 ]),userController.uploadAvatar)
+router.get('/info',verifyTokenAndAdmin,userController.userInfo)
 
 module.exports = router

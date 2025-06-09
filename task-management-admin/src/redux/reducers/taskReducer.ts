@@ -1,5 +1,5 @@
 import { taskPayload, taskState } from "@/types";
-import { DELETE_TASKS_REQUEST, DELETE_TASKS_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, SEARCH_TASKS_SUCCESS } from "../actionTypes/actionTypes";
+import { DELETE_TASKS_REQUEST, DELETE_TASKS_SUCCESS, FILTERED_TASKS_FAILURE, FILTERED_TASKS_REQUEST, FILTERED_TASKS_SUCCESS, GET_TASKS_FAILURE, GET_TASKS_REQUEST, GET_TASKS_SUCCESS, SEARCH_TASKS_SUCCESS, UPDATE_TASK_FAILURE, UPDATE_TASK_REQUEST, UPDATE_TASK_SUCCESS } from "../actionTypes/actionTypes";
 
 const initialState:taskState = {
     tasks:[],
@@ -28,6 +28,31 @@ const taskReducer = (state = initialState, { type, payload }: { type: string; pa
             isLoading:false,
             error:payload
         } 
+
+        // UPDATE
+    case UPDATE_TASK_REQUEST:
+        return {
+          ...state,
+          isLoading: true,
+          error: null,
+        };
+      case UPDATE_TASK_SUCCESS:
+        console.log(payload);
+        return {
+          ...state,
+          isLoading: false,
+          tasks: state.tasks.map((task) =>
+            task._id === payload._id ? payload : task
+          ),
+          error: null,
+        };
+      case UPDATE_TASK_FAILURE:
+        return {
+          ...state,
+          isLoading: false,
+          error: payload,
+        };
+
         case DELETE_TASKS_REQUEST:
             return {
                 ...state,

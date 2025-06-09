@@ -21,7 +21,7 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
   const {user} = useAuth()
   console.log(user._id)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [assignedUserId, setAssignedUserId] = useState(task.assignTo || "");
+  const [assignedUserId, setAssignedUserId] = useState(task?.assignTo?._id || "");
 
 // pages/Dashboard.tsx or similar
 
@@ -37,7 +37,8 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
     await dispatch(deleteOne(id));
   };
 
-  console.log(users, task);
+  console.log("Task:",task);
+
   const statusColors = {
     completed: "bg-green-500",
     "in-progress": "bg-amber-400",
@@ -58,7 +59,7 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
       await dispatch(assignUser(userId, taskId ?? ""));
     } catch (error) {
       console.error("Assignment failed:", error);
-      setAssignedUserId(task.assignTo || "");
+      setAssignedUserId(task.assignTo?._id || "");
     }
   };
   return (
@@ -90,7 +91,7 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
               {task.title}
             </span>
             <span className="text-xs  text-opacity-60 truncate">
-              {task.description}
+              {task.description.slice(0,60)}
             </span>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs  text-opacity-60">

@@ -13,6 +13,7 @@ const userSchema = new Schema({
     },
     email:{
         type:String,
+        unique:true,
         trim:true
     },
     role:{
@@ -25,7 +26,11 @@ const userSchema = new Schema({
     },
     password:{
         type:String,
-        trim:true
+        trim:true,
+        required:true
+    },
+    lastLogin:{
+        type:Date
     }
 },{timestamps:true})
 

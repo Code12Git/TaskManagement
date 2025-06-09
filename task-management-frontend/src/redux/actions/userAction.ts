@@ -35,7 +35,6 @@ export const fetchUser = () => async (dispatch: Dispatch) => {
               error.message || 
               'Users Fetching failed'
     });
-    toast.error("Error Fetching User Successfully")
   }
 };
 
@@ -44,11 +43,11 @@ export const assignUser = (userId:string,taskId:string) => async (dispatch: Disp
   dispatch({ type: ASSIGN_USERS_REQUEST });
   try {
     await privateRequest.post<AuthResponse>('/user/assign',{userId,taskId});
-    console.log(userId,)
+  
     dispatch({ 
       type: ASSIGN_USERS_SUCCESS, 
     });
-    
+    toast.success('You assigned a task to another user')
   } catch (err) {
     const error = err as ApiError;
     dispatch({
@@ -58,7 +57,6 @@ export const assignUser = (userId:string,taskId:string) => async (dispatch: Disp
               error.message || 
               'Users Fetching failed'
     });
-    toast.error("Error Fetching User Successfully")
   }
 };
 

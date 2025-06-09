@@ -34,7 +34,6 @@ const userReducer = (state = initialState, { type, payload }: { type: string; pa
       }
 
      case GET_USERS_SUCCESS:
-      console.log("UserData:",payload)
       return{
         ...state,
         isLoading: false,

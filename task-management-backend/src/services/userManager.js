@@ -85,38 +85,33 @@ const countUsers = async () => {
     const usersByMonth = await userModel.aggregate([
       {
         $group: {
-          // Group by year and month
-          _id: {
-            year: { $year: "$createdAt" }, // Extract year from createdAt
-            month: { $month: "$createdAt" }, // Extract month from createdAt
+           _id: {
+            year: { $year: "$createdAt" },  
+            month: { $month: "$createdAt" },  
           },
-          count: { $sum: 1 }, // Count users in each month
+          count: { $sum: 1 },  
         },
       },
       {
-        $sort: { "_id.year": 1, "_id.month": 1 }, // Sort by year and month
+        $sort: { "_id.year": 1, "_id.month": 1 },  
       },
       {
         $project: {
-          // Project the desired fields
-          _id: 0, // Exclude the default _id field
+           _id: 0,  
           month: {
-            // Format month as MM
-            $concat: [
-              // Concatenate year and month
-              { $toString: "$_id.year" }, // Convert year to string
-              "-", // Add a hyphen
+             $concat: [
+               { $toString: "$_id.year" },  
+              "-",  
               {
                 $cond: [
-                  // Check if month is less than 10
-                  { $lt: ["$_id.month", 10] }, // If month is less than 10
-                  { $concat: ["0", { $toString: "$_id.month" }] }, // Add a leading zero
-                  { $toString: "$_id.month" }, // Otherwise, convert month to string
+                   { $lt: ["$_id.month", 10] }, 
+                  { $concat: ["0", { $toString: "$_id.month" }] }, 
+                  { $toString: "$_id.month" },  
                 ],
               },
             ],
           },
-          count: 1, // Include the count field
+          count: 1, 
         },
       },
     ]);
@@ -132,6 +127,80 @@ const countUsers = async () => {
     throw err;
   }
 };
+
+
+const userInfo = async () => {
+  try {
+    const users = await userModel.find();
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    // Total Users
+    const totalUsers = users.length;
+
+    // New Users This Month
+    const newUser = users.filter(user => {
+      const createdAt = new Date(user.createdAt);
+      return createdAt.getMonth() === currentMonth && createdAt.getFullYear() === currentYear;
+    }).length;
+
+    // New Users Last Month
+    const newUserLastMonth = users.filter(user => {
+      const createdAt = new Date(user.createdAt);
+      return createdAt.getMonth() === currentMonth - 1 && createdAt.getFullYear() === currentYear;
+    }).length;
+
+    // Active Users (last 30 days)
+    const activeUsers = users.filter(user => {
+      const lastLogin = new Date(user.lastLogin);
+      const diffInDays = (currentDate - lastLogin) / (1000 * 60 * 60 * 24);
+      return diffInDays <= 30;
+    }).length;
+
+     const activeUsersLastMonth = users.filter(user => {
+      const lastLogin = new Date(user.lastLogin);
+      const diffInDays = (currentDate - lastLogin) / (1000 * 60 * 60 * 24);
+      return diffInDays > 30 && diffInDays <= 60;
+    }).length;
+
+     const churnRate = totalUsers > 0
+      ? (((totalUsers - activeUsers) / totalUsers) * 100).toFixed(2)
+      : '0.00';
+
+    const churnRatePrev = totalUsers > 0
+      ? (((totalUsers - activeUsersLastMonth) / totalUsers) * 100).toFixed(2)
+      : '0.00';
+
+     const getChange = (current, previous) => {
+      const c = Number(current);
+      const p = Number(previous);
+      if (p === 0) return { change: "0%", trend: "up" };
+      const diff = (((c - p) / p) * 100).toFixed(2);
+      return {
+        change: `${diff}%`,
+        trend: parseFloat(diff) >= 0 ? "up" : "down"
+      };
+    };
+
+    return {
+      totalUsers: totalUsers.toString(),
+      newUser: newUser.toString(),
+      activeUsers: activeUsers.toString(),
+      churnRate: `${churnRate}%`,
+      change: {
+        totalUsers: { change: "0%", trend: "up" },  
+        newUser: getChange(newUser, newUserLastMonth),
+        activeUsers: getChange(activeUsers, activeUsersLastMonth),
+        churnRate: getChange(churnRate, churnRatePrev),
+      },
+    };
+  } catch (err) {
+    throw err;
+  }
+};
+
+
 
 const changeRole = async (body, params) => {
   const { userId } = params;
@@ -213,6 +282,9 @@ const uploadAvatar = async (files, userId) => {
   }
 };
 
+
+
+
 module.exports = {
   getUser,
   assignUser,
@@ -221,4 +293,5 @@ module.exports = {
   changeRole,
   updateUser,
   uploadAvatar,
+  userInfo
 };

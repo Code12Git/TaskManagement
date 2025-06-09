@@ -4,6 +4,9 @@ import "./globals.css";
 import { Providers } from "@/hooks/provider";
 import { Toaster } from "react-hot-toast";
 import LayoutWrapper from "@/hooks/layoutWrapper";
+import { PathnameProvider } from "@/hooks/pathname";
+import SocketProvider from "@/helpers/SocketProvider";
+import PrivateRoute from "@/hooks/privateRouter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,16 +30,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex `}
-      >
-        <Toaster />
-       <Providers>
-       <LayoutWrapper>
-        {children}
-       </LayoutWrapper>
-     </Providers>
-      </body>
-    </html>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}>
+      <Toaster />
+      <Providers>
+        <PrivateRoute>
+          <LayoutWrapper>
+            <SocketProvider>
+              <PathnameProvider>
+                {children}
+              </PathnameProvider>
+            </SocketProvider>
+          </LayoutWrapper>
+        </PrivateRoute>
+      </Providers>
+    </body>
+  </html>
   );
 }
