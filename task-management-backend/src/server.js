@@ -13,7 +13,7 @@ const server = createServer(app);
 
 const io = new socketIo.Server(server, {
   cors: {
-    origin: ["https://task-management-git-feature-draganddrop-code12gits-projects.vercel.app"],  
+    origin: ["https://task-management-pi-virid.vercel.app/"],  
     methods: ["GET", "POST","PUT"],
     credentials: true
   }
