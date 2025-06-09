@@ -1,9 +1,9 @@
-const express = require('express');  
+const express = require('express');
 const { fromEnv } = require('./utils');
 const { createServer } = require('node:http');
 const socketIo = require('socket.io');
 const { logger } = require('./utils');
-const connectDB = require('./config/connection');  
+const connectDB = require('./config/connection');
 const routes = require('./routes');
 const cors = require('cors');
 const SocketService = require('./services/socketService');
@@ -11,15 +11,42 @@ const SocketService = require('./services/socketService');
 const app = express();
 const server = createServer(app);
 
+// Dynamic CORS origin handling
+const allowedOrigins = [
+  /\.vercel\.app$/, 
+  /\.now\.sh$/,    
+  'http://localhost:3000', 
+ 
+].filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+     if (!origin) return callback(null, true);
+    
+     if (allowedOrigins.some(pattern => {
+      if (typeof pattern === 'string') {
+        return origin === pattern;
+      } else if (pattern instanceof RegExp) {
+        return pattern.test(origin);
+      }
+      return false;
+    })) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+};
+
+app.use(cors(corsOptions));
+
 const io = new socketIo.Server(server, {
-  cors: {
-    origin: ["https://task-management-pi-virid.vercel.app/"],  
-    methods: ["GET", "POST","PUT"],
-    credentials: true
-  }
+  cors: corsOptions
 });
 
-new SocketService(io); 
+new SocketService(io);
 
 const PORT = fromEnv('PORT') || 3001;
 
@@ -29,11 +56,7 @@ connectDB().catch(err => {
 });
 
 app.use(express.json());
-app.use(cors({
-  origin: ["https://task-management-git-feature-draganddrop-code12gits-projects.vercel.app"], 
-  credentials: true
-}));
-app.use('/api', routes); 
+app.use('/api', routes);
 
 app.get('/', (req, res) => {
   res.status(200).json({
