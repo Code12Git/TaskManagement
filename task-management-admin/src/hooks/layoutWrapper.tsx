@@ -11,17 +11,15 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const isAdminPage = pathname?.startsWith('/admin');
 
   useEffect(() => {
-    // Only run on client-side
-    if (typeof window === 'undefined') return;
+     if (typeof window === 'undefined') return;
 
-    const checkMobile = () => window.innerWidth < 950;
+    const checkMobile = () => window.innerWidth < 1000;
     
     const handleResize = () => {
       setIsMobile(checkMobile());
     };
 
-    // Set initial state
-    setIsMobile(checkMobile());
+     setIsMobile(checkMobile());
     setIsLoaded(true);
     
     window.addEventListener('resize', handleResize);
@@ -32,7 +30,6 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
     return <div className="w-full">{children}</div>;
   }
 
-  // Don't render anything until we've determined the screen size
   if (!isLoaded) return null;
 
   return (

@@ -37,10 +37,9 @@ const Page = () => {
 
   const submitHandler = async(data: LoginForm) => {
     const res = await dispatch(adminLogin(data));
-    console.log(res)
     clearErrors();
     reset();
-    if(res?.statusCode == 200){
+    if(res?.statusCode === 200){
       router.push('/')
     }
   };
@@ -128,7 +127,7 @@ const Page = () => {
           >
             {isSubmitting || isLoading ? (
               <>
-                <LoadingSpinner className="mr-2" />
+                <LoadingSpinner />
                 Logging in...
               </>
             ) : (

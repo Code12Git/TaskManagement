@@ -4,7 +4,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PencilIcon, CircleX, ChevronDown } from 'lucide-react';
-import { Task } from '@/types';
+import { Task, TaskInput } from '@/types';
 import { assignUser, fetchAllUsers } from '@/redux/actions/userAction'; // Assuming you have these actions
 import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
 import { update } from '@/redux/actions/taskAction';
@@ -21,17 +21,17 @@ const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
   const dispatch = useAppDispatch();
   const { userData } = useAppSelector(state => state.user);
    const {adminData} = useAppSelector(state => state.auth);
+   const [assignedUserId, setAssignedUserId] = useState(task?.assignTo?._id || "");
+
   useEffect(()=>{
     dispatch(fetchAllUsers())
   },[dispatch])  
-  // State for all editable fields
   const [formData, setFormData] = useState({
     title: task.title,
     description: task.description,
     status: task.status,
     priority: task.priority,
     dueDate: task.dueDate,
-    assignTo: task.assignTo?._id || ''
   });
 
   useEffect(() => {
@@ -46,7 +46,6 @@ const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
     };
   }, [adminData?._id]);
 
-  // Update form data when task prop changes
   useEffect(() => {
     setFormData({
       title: task.title,
@@ -54,7 +53,6 @@ const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
       status: task.status,
       priority: task.priority,
       dueDate: task.dueDate,
-      assignTo: task.assignTo?._id || ''
     });
   }, [task]);
 
@@ -70,19 +68,16 @@ const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
     }));
   };
 
-  const handleAssignUser = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleAssignies = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const userId = e.target.value;
     const taskId = task._id;
-    
-    setFormData(prev => ({ ...prev, assignTo: userId }));
+    setAssignedUserId(userId);
   
     try {
-      if (taskId) {
-        await dispatch(assignUser(userId, taskId));
-      }
+      await dispatch(assignUser(userId, taskId ?? ""));
     } catch (error) {
       console.error("Assignment failed:", error);
-      setFormData(prev => ({ ...prev, assignTo: task.assignTo?._id || '' }));
+      setAssignedUserId(task.assignTo?._id || "");
     }
   };
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,27 +85,22 @@ const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
     
     try {
       if (task._id) {
-        // Prepare the data to match your API requirements
-        const updateData:Task = {
+        const updateData:TaskInput = {
           title: formData.title,
           description: formData.description,
           status: formData.status,
           priority: formData.priority,
-          dueDate: formData.dueDate,
-          assignTo: formData.assignTo || undefined // Send undefined if empty to unassign
+          dueDate: new Date(formData.dueDate),
         };
 
-        // Dispatch the update action with the correct parameters
         await dispatch(update(updateData, task._id));
         closeModal();
       }
     } catch (error) {
       console.error("Failed to update task:", error);
-      // Error is already handled by your Redux action
     }
   };
 
-  // Format date for datetime-local input
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -268,8 +258,8 @@ const UpdateTask = ({ updateModal, setIsUpdateModal, task }: UpdateProps) => {
                         <select
                           id="assignTo"
                           name="assignTo"
-                          value={formData.assignTo}
-                          onChange={handleAssignUser}
+                          value={assignedUserId}
+                          onChange={handleAssignies}
                           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
                         >
                           <option value="">Unassigned</option>

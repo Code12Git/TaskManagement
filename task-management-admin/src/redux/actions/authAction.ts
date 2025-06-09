@@ -13,6 +13,7 @@ import toast from 'react-hot-toast'
 
 export const adminLogin = (credentials: { email: string; password: string }) => async (dispatch: Dispatch) => {
   dispatch({ type: ADMIN_LOGIN_REQUEST });
+  console.log(credentials)
   try {
     const response = await publicRequest.post<AuthResponse>('/auth/admin', credentials);
     dispatch({
@@ -35,8 +36,6 @@ export const adminLogin = (credentials: { email: string; password: string }) => 
               error.message || 
               'Login failed'
     });
-    toast.error("Error Logged In User Successfully")
-
   }
 
 };

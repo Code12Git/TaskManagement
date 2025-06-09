@@ -6,7 +6,7 @@ import pLimit from 'p-limit';
 
 const limit = pLimit(3);
 
-const api = "AIzaSyBNd0mXSDLl-NicOoQ9kfzI_2Rdc9XA2V4";
+const api = process.env.NEXT_GEMINI_KEY;
 
 // Throwing an error if the API key is missing to prevent accidental misconfiguration
 if (!api) {
@@ -21,7 +21,6 @@ export const generateDescription = async (title: string) => {
   // Using the limiter to ensure no more than 3 email generations happen at once
   return limit(async () => {
       try {
-        console.log('Gone')
       // Creating a prompt to guide the AI in generating a relevant email body
       const prompt = `Generate a  description for the task  which has title:${title}`;
 
@@ -33,7 +32,6 @@ export const generateDescription = async (title: string) => {
 
       // Extracting plain text from the generated response
       const generatedText = await result.response.text();
-        console.log(generatedText)
       // Returning the final generated email body text
       return generatedText;
     } catch (error) {
@@ -49,8 +47,7 @@ export const generatePriority = async (title: string) => {
     // Using the limiter to ensure no more than 3 email generations happen at once
     return limit(async () => {
         try {
-          console.log('Gone')
-        // Creating a prompt to guide the AI in generating a relevant email body
+         // Creating a prompt to guide the AI in generating a relevant email body
         const prompt = `Based on the task title: "${title}", assign a priority level. The priority must be exactly one of the following: "high", "medium", or "low". Do not return anything else.`;
   
         // Getting a generative model instance (using the "gemini-2.0-flash" model for fast response)
@@ -61,8 +58,7 @@ export const generatePriority = async (title: string) => {
   
         // Extracting plain text from the generated response
         const generatedText = await result.response.text();
-          console.log(generatedText)
-        // Returning the final generated email body text
+         // Returning the final generated email body text
         return generatedText;
       } catch (error) {
         // Logging and rethrowing any errors to be handled by the calling function

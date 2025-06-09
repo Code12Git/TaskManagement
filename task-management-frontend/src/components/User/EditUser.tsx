@@ -73,7 +73,7 @@ const EditUser: React.FC = () => {
   
   const userFields = Object.entries(formData)
     .filter(
-      ([key]) => !["_id", "role", "__v", "password", "updatedAt", "avatar"].includes(key)
+      ([key]) => !["_id", "role", "__v", "password", "updatedAt", "avatarUrl",'lastLogin'].includes(key)
     )
     .sort(([a], [b]) => {
       const order = ["name", "email", "username", "bio"];
@@ -129,7 +129,6 @@ const EditUser: React.FC = () => {
       const response = await formRequest.post('/user/upload-avatar', formDataObj, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log(response.data.data.avatarUrl)
       const newAvatarUrl = response.data.data.avatarUrl;
       return newAvatarUrl;
     } catch (error) {
@@ -173,7 +172,6 @@ const EditUser: React.FC = () => {
       
       setFormData(updatedUserData);
       
-      // Update localStorage with the complete updated user data
       localStorage.setItem('user', JSON.stringify(updatedUserData));
       
       setIsFieldEdit({});

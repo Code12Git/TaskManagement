@@ -28,13 +28,11 @@ export default function Home() {
   useEffect(()=>{
     const fetchUserInfo = async() => {
       const res = await privateRequest.get('/user/info')
-      console.log(res)
       setUserInfo(res.data.data)
     }
     fetchUserInfo()
   },[])
 
-  console.log(userInfo)
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">

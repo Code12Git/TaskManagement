@@ -17,11 +17,7 @@ const TaskBoard = ({ initialTasks }: { initialTasks: Task[] }) => {
   const { filteredData } = useAppSelector((state) => state.tasks);
   const { userData } = useAppSelector((state) => state.auth);
   const [users, setUsers] = useState<User[]>([]);
-  const [task, setTasks] = useState<Task[]>(initialTasks);
 
-  useEffect(() => {
-    setTasks(initialTasks);
-  }, [initialTasks]);
 
   const groupedTasks = initialTasks.reduce(
     (acc: Record<string, Task[]>, task) => {
@@ -119,12 +115,8 @@ const TaskBoard = ({ initialTasks }: { initialTasks: Task[] }) => {
       0,
       movedTask
     );
-    setTasks(updatedTasks);
-
-    console.log("hey");
     await dispatch(updateAll(updatedTasks));
   };
-  console.log(task);
 
   return (
     <div className="min-h-screen w-screen mb-12 rounded bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">

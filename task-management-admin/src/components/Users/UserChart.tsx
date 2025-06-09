@@ -10,11 +10,9 @@ const UserChart = () => {
 
   const dispatch = useAppDispatch()
   const {count} = useAppSelector((state) => state.user)
-  console.log(count)
   useEffect(()=>{
     const fetchCount = async() => {
-      const res = await dispatch(fetchUserCountByMonth())
-      console.log(res)
+      await dispatch(fetchUserCountByMonth())
 
     }
     fetchCount()
@@ -52,7 +50,6 @@ const UserChart = () => {
           topRight: 5,
         },
       },
-      // insert similar in dataset object for making multi bar chart
     ],
   };
   const options = {

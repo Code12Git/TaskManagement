@@ -128,7 +128,7 @@ const TaskDetails = () => {
                     {task.priority}
                   </span>
                 </div>
-                <p className="mt-3 text-gray-600">{task.description}</p>
+                <p className="mt-3 text-gray-600">{task.description.slice(0,50)}</p>
                 
                 <div className="mt-4 flex items-center justify-between">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[task.status]}`}>

@@ -1,5 +1,5 @@
 "use client";
-import React, {  useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FiCheck,
@@ -23,7 +23,12 @@ const TaskItem = ({ task, users }: { task: Task; users: User[] }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [assignedUserId, setAssignedUserId] = useState(task?.assignTo?._id || "");
 
-// pages/Dashboard.tsx or similar
+
+  useEffect(() => {
+    if (task.assignTo) {
+      setAssignedUserId(task.assignTo._id);
+    }
+  }, [task.assignTo]);
 
 
 
