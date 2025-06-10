@@ -5,6 +5,14 @@
 
 A comprehensive Task Management System designed for teams to create, assign, track, and manage tasks efficiently. This full-stack application features advanced collaboration tools, AI-powered task suggestions, and real-time updates.
 
+## 🎥 Demo Video
+
+[📽️ Watch the User Demo](https://drive.google.com/file/d/1ZTGfLhlN_sxiHXTF2Mo9C3QL-uRJGtDH/view?usp=sharing)
+
+[📽️ Watch the Admin Demo](https://drive.google.com/file/d/1ZTGfLhlN_sxiHXTF2Mo9C3QL-uRJGtDH/view?usp=sharing)
+
+
+
 ## Features
 
 ### Core Features
