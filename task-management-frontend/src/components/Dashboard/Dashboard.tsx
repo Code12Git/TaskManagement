@@ -23,7 +23,7 @@ const TaskDashboardTable = () => {
 
     switch (filter) {
       case 'assigned':
-        filtered = taskData.filter(task => task.assignTo === userData?._id);
+        filtered = taskData.filter(task => task.assignTo?._id === userData?._id);
         break;
       case 'created':
         filtered = taskData.filter(task => task.userId === userData?._id);  
