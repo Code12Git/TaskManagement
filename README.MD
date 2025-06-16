@@ -150,6 +150,9 @@ npm run dev
 
 5.Access the application at http://localhost:3000
 
+6.Admin_Email=rahulmorya266@gmail.com
+  Admin_Pass = rahul123
+
 ## Deployment
 The application is deployed on:
 
